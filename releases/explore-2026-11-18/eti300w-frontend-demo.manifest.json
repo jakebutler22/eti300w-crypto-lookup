@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
-  "builtUTC": "2026-11-18T22:38:23Z",
+  "builtUTC": "2026-11-18T22:45:22Z",
   "mode": "demo",
   "archive": {
     "name": "eti300w-frontend-demo.tar.gz",
-    "sha256": "7ce3d45eb7cde97131d6bf9a8189228b4c4cefe700b8183b82d179cbbebaf6d8",
-    "bytes": 59041
+    "sha256": "b180a077dfa4291b8f8c91b3923e2dc0b91e719994e8d013c02df656642cd0f6",
+    "bytes": 59578
   },
   "files": [
     {
       "path": "index.html",
-      "sha256": "a74e12c10b49d3ae199fd3029ac5a9c1fd5cbaa338d3efe5afda924281a7ddf6",
-      "bytes": 15082
+      "sha256": "f8bc71df934e70735e731480e7edc48a114311d9258a213525714cb64d2f30a8",
+      "bytes": 16254
     },
     {
       "path": "style.css",
-      "sha256": "9aceca4d8e134b4ae49ced8c2ec0262e013f8b6ab8189f4ad6b827e898109552",
-      "bytes": 29604
+      "sha256": "6d1c40ff337be011be7b8c7f81bb0942cccb649ad691cd570f84eadfb5f46125",
+      "bytes": 29982
     },
     {
       "path": "script.js",
