@@ -96,6 +96,10 @@ h2 { font-size: 24px; line-height: 1.25; font-weight: 600; letter-spacing: -.65p
 .asset-row-name { display: block; font-size: 16px; font-weight: 600; line-height: 1.4; }
 .asset-row-symbol { display: block; color: var(--muted); font-size: 13px; font-weight: 400; margin-top: 2px; }
 .asset-symbol-mark { display: inline-flex; justify-content: center; align-items: center; flex-shrink: 0; width: 37px; height: 37px; border-radius: 50%; background: #e9edf4; color: #536071; font-size: 12px; font-weight: 700; letter-spacing: -.5px; }
+.asset-symbol-mark { overflow: hidden; }
+.asset-symbol-mark img { display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 50%; }
+.catalog-load-status { margin-left: 12px; font-size: 12px; }
+.catalog-load-status:empty { display: none; }
 .asset-symbol-mark[data-symbol="BTC"] { background: #f7931a; color: #fff; font-size: 27px; }
 .asset-symbol-mark[data-symbol="ETH"] { background: #627eea; color: #fff; font-size: 27px; }
 .asset-symbol-mark[data-symbol="SOL"] { background: #111317; color: #8eecd1; font-size: 30px; }

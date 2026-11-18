@@ -30,7 +30,7 @@ Target reported by your handoff:
 - Region `us-east-2`; `coinbase-300w-web`, instance `i-07af2a856bd6c5a38`.
 - Amazon Linux 2023 / nginx; root `/usr/share/nginx/html`; ordinary files root:root mode 644.
 - Existing `/etc/nginx/default.d/crypto-api.conf` preserves `/api/` to app:5000. Preserve it.
-- The candidate payload is only `01-web-release-API/` (eight files), also in `release/eti300w-frontend-api.tar.gz` with its manifest. The rest of this team ZIP is not a web payload.
+- The candidate payload is only `01-web-release-API/` (36 runtime files), also in `release/eti300w-frontend-api.tar.gz` with its manifest. The rest of this team ZIP is not a web payload.
 
 Before any remote write, confirm the current effective root/deployment method and provide the exact file list/hash, protected backup location, staging location, retained ownership/modes, and verified restore plan for Jake's approval. Sending this ZIP is not deployment authorization.
 

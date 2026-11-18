@@ -17,8 +17,8 @@ The supplied backend candidate remains unchanged under [handoff/backend-candidat
 ## Use the explorer
 
 - Search by full name or ticker, filter a local watchlist, and sort the catalog by name.
-- The selected asset loads on page reload and refreshes 30 seconds after each completed lookup while the tab is visible. Hidden tabs, in-flight requests, cooldowns and API retry guidance pause refreshes.
-- Price charts plot successful quotes received during this visit, up to 120 per asset. A first quote is a dot; subsequent quotes create a line. Times indicate browser receipt, while provider time independently determines freshness.
+- Every supported asset loads its market price and 24-hour volume automatically on page load. A full refresh starts 30 seconds after the previous batch completes while the tab is visible. Up to three paced requests run at once; hidden tabs and API retry guidance pause work.
+- Price charts retain successful quotes for every asset during this visit, up to 120 per asset. A first quote is a dot; subsequent quotes create a line. Times indicate browser receipt, while provider time independently determines freshness.
 - Demo mode uses clearly labeled fixed examples; its chart stays flat. Database stored prices never fill missing market prices.
 - Open **Specifications → View JSON response** for original payloads and endpoint links. The current view assembles database and market responses in the browser.
 - All 27 requested assets are present; Monero and USDC are excluded. If a target asset is absent from the database response, its row says Awaiting API and sends no market request.
@@ -31,17 +31,19 @@ npm run serve
 
 Open [localhost:8000](http://127.0.0.1:8000). Stop with Ctrl+C. JavaScript modules require HTTP; opening `index.html` directly is unsupported.
 
-`config.js` defaults to **api**. The local preview serves the eight runtime files and forwards only GET catalog/market routes to the observed public API. `npm run serve:demo` is an explicit offline fixture preview; it keeps truthful fixture labels. API mode uses the same-origin `/api/db/cryptos` and `/api/live/<symbol>` routes through the existing web-tier proxy. A static local server alone does not provide those API routes. Credentials and private endpoints do not belong in frontend configuration.
+`config.js` defaults to **api**. The local preview serves the allowlisted runtime files and forwards only GET catalog/market routes to the observed public API. `npm run serve:demo` is an explicit offline fixture preview; it keeps truthful fixture labels. API mode uses the same-origin `/api/db/cryptos` and `/api/live/<symbol>` routes through the existing web-tier proxy. A static local server alone does not provide those API routes. Credentials and private endpoints do not belong in frontend configuration.
 
 ```sh
 npm test
 python3 scripts/package_frontend.py --mode api
 ```
 
-All 96 local automated tests pass. The release command writes an eight-file archive and SHA-256 manifest to `.artifacts/release/`; it does not deploy. Use [releases/explore-2026-11-18](releases/explore-2026-11-18/) for the reviewed API/demo archives and team handoff ZIP. Only the eight runtime files belong in the web document root.
+All 115 automated checks pass with `npm test`. The release command writes a 36-file archive and SHA-256 manifest to `.artifacts/release/`; it does not deploy. Use [releases/explore-2026-11-18](releases/explore-2026-11-18/) for the reviewed API/demo archives and team handoff ZIP. The deployment contains 36 runtime files: eight application files, 27 local SVG coin logos, and their license. Preserve the `assets/coins/` directory structure in the web root.
 
 ## Documentation and team handoff
 
 [Interface changes](docs/explore-redesign.md) · [Testing](docs/testing.md) · [API contract](docs/api-contract.md) · [Architecture](docs/architecture.md) · [AWS deployment review](docs/aws-deployment.md) · [Submission checklist](docs/submission-checklist.md)
 
 [Team reply templates and requests](docs/team-return/) identify the remaining evidence, release review and contribution work. Jake owns the frontend; Nolan owns Flask, database queries and provider integration; Alex owns infrastructure and database deployment. Actual hosted frontend verification, cloud screenshots and the final single submission document still need completion. Earlier infrastructure material and source reports retain their dates and attribution.
+
+All 27 coins use local SVG logos. [Logo provenance and license](docs/coin-logo-sources.md) records the pinned source; no image CDN is needed at runtime.

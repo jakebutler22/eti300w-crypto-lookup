@@ -16,11 +16,11 @@ The requested website catalog is now the exact **27 symbols, names and categorie
 
 The earlier eight-row catalog including XMR is historical evidence and is superseded by this public 27-row check. Actual database/schema/query screenshots and deployed source/migration provenance are still needed.
 
-The selected asset refreshes every 30 seconds while the page is visible and on initial page load, respecting in-flight requests, cancellation, cooldown and returned rate-limit waits (including an explicit retry delay when exposed for HTTP 503). The session chart plots actual received prices against browser receipt time; it does not invent historical data or treat receipt time as provider observation time. Repeated fixed samples can produce a flat chart. API failures never fall back to fixtures or stored prices.
+All supported assets load automatically and refresh together 30 seconds after each batch completes while visible, respecting in-flight requests, cancellation, cooldown and returned rate-limit waits (including an explicit retry delay when exposed for HTTP 503). The session chart plots actual received prices against browser receipt time; it does not invent historical data or treat receipt time as provider observation time. Repeated fixed samples can produce a flat chart. API failures never fall back to fixtures or stored prices.
 
-**96/96 local automated frontend checks passed.** Earlier Safari local-proxy checks rendered real BTC/ETH responses and an unavailable XMR profile. That was historical verification of the preceding interface; XMR is now excluded. Latest hosted/frontend verification remains pending. These local results do not establish deployment of this release or execution of the backend candidate.
+**115/115 local automated frontend checks passed.** Earlier Safari local-proxy checks rendered real BTC/ETH responses and an unavailable XMR profile. That was historical verification of the preceding interface; XMR is now excluded. Latest hosted/frontend verification remains pending. These local results do not establish deployment of this release or execution of the backend candidate.
 
-The last verified public origin was `http://3.145.42.74/`, serving the temporary stored-price site. The public database and BTC routes worked. Confirm the origin before release; public IPs can change after stop/start.
+The last verified public origin was `http://3.145.42.74/`, serving the preceding redesigned interface in API mode. The public catalog and all 27 market routes worked in the latest read-only check. This new all-coin loader/logo release still needs deployment and hosted acceptance checks. Confirm the origin before release; public IPs can change after stop/start.
 
 ## What the new backend candidate changes
 

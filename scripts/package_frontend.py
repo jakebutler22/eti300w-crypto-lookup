@@ -16,6 +16,11 @@ import tempfile
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+COIN_SYMBOLS = (
+    "BTC", "ETH", "XRP", "LTC", "ADA", "DOGE", "SOL", "BCH", "LINK",
+    "AVAX", "DOT", "XLM", "UNI", "ATOM", "SHIB", "POL", "ETC", "HBAR",
+    "NEAR", "AAVE", "ICP", "APT", "ARB", "OP", "SUI", "ALGO", "FIL",
+)
 RUNTIME_FILES = (
     "index.html",
     "style.css",
@@ -25,7 +30,7 @@ RUNTIME_FILES = (
     "data-state.js",
     "data/demo-assets.js",
     "favicon.svg",
-)
+) + tuple(f"assets/coins/{symbol.lower()}.svg" for symbol in COIN_SYMBOLS) + ("assets/coins/LICENSE.txt",)
 # Only the existing, standalone mode property is changed. Do not execute JavaScript.
 MODE_PROPERTY = re.compile(
     r'^(?P<prefix>[ \t]*mode:[ \t]*)(?P<quote>[\'\"])(?:demo|api)'

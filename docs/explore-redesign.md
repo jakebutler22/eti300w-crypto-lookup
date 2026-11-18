@@ -1,5 +1,9 @@
 # Explore redesign - November 18, 2026
 
+## Latest: full market table and coin logos
+
+All 27 supported coins now load price/volume automatically, with a single catalog read and up to three paced market requests at once. Cached quotes and per-asset session charts open immediately on selection. Full-table refreshes run 30 seconds after each completed batch while visible. Loading, unavailable quotes and retained older snapshots are distinct; no stored-price/fixture fallback is used. All 27 logos are local SVGs, with the MIT notice packaged alongside them. The older selected-only behavior described below is historical.
+
 Reference: [Coinbase Explore](https://www.coinbase.com/explore), inspected in the user's actual Safari. The implementation uses this project's own branding, HTML, CSS and vanilla JavaScript.
 
 ## Changes

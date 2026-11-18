@@ -6,9 +6,9 @@
     <meta name="description" content="Explore cryptocurrency profiles, USD prices and 24-hour trading volume.">
     <meta name="theme-color" content="#ffffff">
     <title>Explore cryptocurrency</title>
-    <link rel="icon" href="./favicon.svg?v=20261118-live" type="image/svg+xml">
-    <link rel="stylesheet" href="./style.css?v=20261118-live">
-    <script type="module" src="./script.js?v=20261118-live"></script>
+    <link rel="icon" href="./favicon.svg?v=20261118-full" type="image/svg+xml">
+    <link rel="stylesheet" href="./style.css?v=20261118-full">
+    <script type="module" src="./script.js?v=20261118-full"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -47,7 +47,7 @@
         </div>
       </section>
 
-      <div class="catalog-count" aria-label="Catalog information"><strong id="summary-asset-count">27</strong> assets</div>
+      <div class="catalog-count" aria-label="Catalog information"><strong id="summary-asset-count">27</strong> assets<span id="catalog-load-status" class="catalog-load-status" role="status" aria-live="polite"></span></div>
       <div class="mode-notice" id="mode-notice" hidden>
         <p><strong id="environment-label">Market data.</strong></p>
       </div>
@@ -61,7 +61,7 @@
           </div>
           <div class="table-scroll">
             <table class="market-table">
-              <caption class="sr-only">Available cryptocurrencies. Select an asset to view its profile and request a price snapshot.</caption>
+              <caption class="sr-only">Cryptocurrencies with automatically loaded market prices and volume. Select an asset to view its profile and chart.</caption>
               <thead><tr><th scope="col" class="watch-column"><span class="sr-only">Watchlist</span></th><th scope="col" id="asset-name-column" aria-sort="none">Asset</th><th scope="col" class="numeric-column">Price</th><th scope="col" class="numeric-column volume-column">24h volume</th><th scope="col" class="action-column"><span class="sr-only">Details</span></th></tr></thead>
               <tbody id="asset-list"></tbody>
             </table>
@@ -120,7 +120,7 @@
         <div class="section-heading"><div><h2 id="learn-title">A little crypto context</h2></div></div>
         <div class="learn-columns">
           <section aria-labelledby="glossary-title"><h3 id="glossary-title">The essentials</h3><dl class="glossary"><div><dt>Ticker</dt><dd>An asset’s short symbol, such as BTC for Bitcoin.</dd></div><div><dt>USD price</dt><dd>The price of one unit in US dollars. An API quote is a last-trade snapshot.</dd></div><div><dt>24-hour volume</dt><dd>The amount traded over a day. Check its unit; volume is different from price.</dd></div><div><dt>Price change</dt><dd>How much a price moved over a period, often a percentage. This page does not report it.</dd></div><div><dt>Market timestamp</dt><dd>When the provider observed a quote. Receiving a response now does not make an old quote current.</dd></div></dl></section>
-          <section class="faq" aria-labelledby="faq-title"><h3 id="faq-title">FAQs</h3><details><summary>Are these prices live?</summary><p id="faq-live-answer">Prices come from Coinbase Exchange through our API. The selected asset refreshes every 30 seconds while this tab is visible. Check the provider timestamp for the age of its latest trade.</p></details><details><summary>Why is information missing?</summary><p id="faq-missing-answer">Unavailable descriptions, categories, quotes and units are marked explicitly. A failed market request does not fall back to stored prices.</p></details><details><summary>How do I get another quote?</summary><p id="faq-refresh-answer">The selected asset refreshes on page load and every 30 seconds while this tab is visible. You can also refresh it manually. Requests pause during cooldowns or API rate limits.</p></details><details><summary>Which assets can I explore?</summary><p>The catalog contains 27 assets. In API mode, assets awaiting database support are marked unavailable. Monero is excluded because its configured Coinbase USD market is unavailable.</p></details><details><summary>Where can I view JSON?</summary><p>Open Specifications in the asset overview, then View JSON response. With the supplied Flask API, database and market responses are combined in the browser, with links to both original endpoints.</p></details><details><summary>Where is my watchlist saved?</summary><p>Your watchlist is saved in this browser on this device. It does not create an account or sync between devices. If browser storage is unavailable, it lasts for this visit.</p></details></section>
+          <section class="faq" aria-labelledby="faq-title"><h3 id="faq-title">FAQs</h3><details><summary>Are these prices live?</summary><p id="faq-live-answer">Prices come from Coinbase Exchange through our API. All listed coins load automatically and refresh while this tab is visible. Check the provider timestamp for the age of the latest trade.</p></details><details><summary>Why is information missing?</summary><p id="faq-missing-answer">Unavailable descriptions, categories, quotes and units are marked explicitly. A failed market request does not fall back to stored prices.</p></details><details><summary>How do I get another quote?</summary><p id="faq-refresh-answer">All supported coins load on page load and refresh together every 30 seconds after the previous refresh finishes. Refresh now updates the table again, starting with your selected coin. Requests pause while this tab is hidden or the API asks us to wait.</p></details><details><summary>Which assets can I explore?</summary><p>The catalog contains 27 assets. In API mode, assets awaiting database support are marked unavailable. Monero is excluded because its configured Coinbase USD market is unavailable.</p></details><details><summary>Where can I view JSON?</summary><p>Open Specifications in the asset overview, then View JSON response. With the supplied Flask API, database and market responses are combined in the browser, with links to both original endpoints.</p></details><details><summary>Where is my watchlist saved?</summary><p>Your watchlist is saved in this browser on this device. It does not create an account or sync between devices. If browser storage is unavailable, it lasts for this visit.</p></details></section>
         </div>
       </section>
       <footer class="site-footer"><a class="footer-brand" href="#explorer">cryptolookup.</a><a href="#explorer">Back to explore ↑</a></footer>

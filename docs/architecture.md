@@ -1,5 +1,9 @@
 # Project architecture
 
+## All-asset loading and logos
+
+The latest frontend loads the database catalog once per full refresh batch, then automatically requests every supported coin's market quote with at most three paced concurrent requests. It refreshes the catalog/quotes 30 seconds after batch completion while visible. Each quote retains its original provider data; failed markets remain unavailable, without stored-price or fixture substitution. Selecting a preloaded asset uses its cached full response and session chart immediately. Every one of the 27 requested assets has a locally packaged SVG logo, with provenance in `coin-logo-sources.md`. This release contains 36 runtime files including the logos and license.
+
 ## Production default and copy cleanup
 
 The public origin was observed serving Crypto Context and API mode at 5:22 p.m. Eastern on November 18. The repository now defaults to API mode too. `npm run serve` uses `scripts/serve_frontend.py` for a localhost-only, read-only proxy to the public catalog/market routes; the default cannot silently show fixtures on failure. Explicit offline previews remain available with `npm run serve:demo`. Production HTML/FAQs no longer contain sample-data boilerplate. Original JSON payloads remain unchanged. This newer release still requires hosted verification after the team deploys it; no AWS write was performed here.

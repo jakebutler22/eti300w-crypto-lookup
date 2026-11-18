@@ -1,7 +1,7 @@
-import { APP_CONFIG } from './config.js?v=20261118-live';
-import { formatUsdPrice, formatVolume, classifyFreshness, appendPriceObservation, priceChartGeometry } from './data-state.js?v=20261118-live';
-import { ApiError, getAssetDirectory, loadAssetDirectory, lookupAsset } from './api.js?v=20261118-live';
-import { DEMO_ASSETS, TEAM_ASSETS } from './data/demo-assets.js?v=20261118-live';
+import { APP_CONFIG } from './config.js?v=20261118-full';
+import { formatUsdPrice, formatVolume, classifyFreshness, appendPriceObservation, priceChartGeometry } from './data-state.js?v=20261118-full';
+import { ApiError, getAssetDirectory, loadMarketDirectory, lookupAsset } from './api.js?v=20261118-full';
+import { DEMO_ASSETS, TEAM_ASSETS } from './data/demo-assets.js?v=20261118-full';
 
 const $ = (id) => document.getElementById(id);
 const isDemo = APP_CONFIG.mode === 'demo';
@@ -14,12 +14,15 @@ const chartTime = new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2
 const state = { response: null, controller: null, requestId: 0, selectedSymbol: '', lastQuery: '', errorCode: '', directoryLoaded: !usesNolanApi, loading: false, cooldownUntil: 0, rateLimitedUntil: 0, autoRefreshQuery: 'BTC', nextRefreshAt: Infinity };
 state.directoryFilter = 'all';
 state.sort = 'directory';
+Object.assign(state, { batchController: null, batchId: 0, batchLoading: false, batchPending: new Set(), batchTotal: 0, batchCompleted: 0, desiredSymbol: 'BTC', pendingQuery: null });
 const WATCHLIST_KEY = 'eti300w-watchlist-v1';
 let watchlist = readWatchlist();
 // Table values are either labeled demo fixtures or responses actually requested.
 // Loading the database directory never supplies a market price to this cache.
 const marketCache = new Map();
 const priceHistories = new Map();
+const responseReceipts = new WeakMap();
+const rowFailures = new Map();
 if (isDemo) DEMO_ASSETS.forEach((data) => marketCache.set(data.symbol, { data, mode: 'demo', marketStatus: 'available' }));
 const form = $('search-form');
 const input = $('asset-search');
@@ -63,11 +66,11 @@ function updateRefreshControl() {
   const now = Date.now();
   const remaining = Math.max(0, state.rateLimitedUntil - now);
   const cooldown = Math.max(0, state.cooldownUntil - now);
-  $('refresh-asset').disabled = !state.response || state.loading || cooldown > 0 || remaining > 0;
+  $('refresh-asset').disabled = !state.response || state.loading || state.batchLoading || cooldown > 0 || remaining > 0;
   $('refresh-asset').textContent = isDemo ? 'Reload sample' : 'Refresh now';
-  $('search-form').querySelector('[type="submit"]').disabled = remaining > 0;
+  $('search-form').querySelector('[type="submit"]').disabled = !usesNolanApi && remaining > 0;
   $('error-action').disabled = remaining > 0;
-  list.querySelectorAll('button[data-asset]').forEach((button) => { button.disabled = remaining > 0; });
+  list.querySelectorAll('button[data-asset]').forEach((button) => { button.disabled = !usesNolanApi && remaining > 0; });
   const refreshMessage = remaining > 0
     ? `The API asked us to wait. Try again in ${Math.ceil(remaining / 1000)} seconds.`
     : '';
@@ -80,7 +83,7 @@ function updateRefreshControl() {
 function applyRateLimit(error) {
   if (error?.status !== 429 && !(error?.status === 503 && Number.isFinite(error.retryAfterMs))) return;
   const delay = Number.isFinite(error.retryAfterMs) ? Math.min(300000, Math.max(0, error.retryAfterMs)) : 30000;
-  state.rateLimitedUntil = Date.now() + delay;
+  state.rateLimitedUntil = Math.max(state.rateLimitedUntil, Date.now() + delay);
 }
 
 function renderFreshness() {
@@ -101,17 +104,22 @@ function renderFreshness() {
   }
 }
 
+function recordMarketResponse(response) {
+  marketCache.set(response.data.symbol, response);
+  const { data } = response;
+  if (response.marketStatus === 'unavailable' || !Number.isFinite(data.market.priceUsd) || data.market.priceUsd < 0) return;
+  if (!responseReceipts.has(response)) {
+    const reportedReceipt = Date.parse(data.retrievedAt);
+    responseReceipts.set(response, Number.isFinite(reportedReceipt) ? reportedReceipt : Date.now());
+  }
+  const history = appendPriceObservation(priceHistories.get(data.symbol) || [], data.market.priceUsd, responseReceipts.get(response));
+  priceHistories.set(data.symbol, history);
+}
+
 function renderPriceChart(response) {
   const { data } = response;
-  const available = response.marketStatus !== 'unavailable' && Number.isFinite(data.market.priceUsd) && data.market.priceUsd >= 0;
-  let history = priceHistories.get(data.symbol) || [];
-  if (available) {
-    // These are receipt-time observations from this visit, never historical candles.
-    const reportedReceipt = Date.parse(data.retrievedAt);
-    const receivedAt = Number.isFinite(reportedReceipt) ? reportedReceipt : Date.now();
-    history = appendPriceObservation(history, data.market.priceUsd, receivedAt);
-    priceHistories.set(data.symbol, history);
-  }
+  const available = response.marketStatus !== 'unavailable' && Number.isFinite(data.market.priceUsd) && data.market.priceUsd >= 0 && !rowFailures.has(data.symbol);
+  const history = priceHistories.get(data.symbol) || [];
   const geometry = priceChartGeometry(history);
   const svg = $('price-chart');
   svg.toggleAttribute('hidden', geometry.count === 0);
@@ -138,9 +146,19 @@ function renderPriceChart(response) {
 }
 
 function setSymbolMark(element, symbol) {
-  const marks = { BTC: '₿', ETH: 'Ξ', SOL: '◎', USDC: '$', ADA: '₳', AVAX: '▲', LINK: '⬡', LTC: 'Ł', XRP: 'X', DOGE: 'Ð', XMR: 'M' };
   element.dataset.symbol = symbol;
-  element.textContent = marks[symbol] || symbol;
+  element.replaceChildren();
+  const image = document.createElement('img');
+  image.src = `./assets/coins/${symbol.toLowerCase()}.svg`;
+  image.alt = '';
+  image.width = 40;
+  image.height = 40;
+  image.decoding = 'async';
+  image.addEventListener('error', () => {
+    // The coin name remains beside the decorative logo if an asset cannot load.
+    element.textContent = symbol;
+  }, { once: true });
+  element.append(image);
 }
 
 function renderApiExamples(assets) {
@@ -242,7 +260,7 @@ function renderDirectory(query = '') {
     button.dataset.asset = asset.symbol;
     button.setAttribute('aria-pressed', String(asset.symbol === state.selectedSymbol));
     button.setAttribute('aria-label', `Look up ${asset.name} (${asset.symbol})`);
-    button.disabled = state.rateLimitedUntil > Date.now();
+    button.disabled = !usesNolanApi && state.rateLimitedUntil > Date.now();
     const mark = document.createElement('span');
     mark.className = 'asset-symbol-mark';
     mark.setAttribute('aria-hidden', 'true');
@@ -263,22 +281,28 @@ function renderDirectory(query = '') {
     const volumeCell = document.createElement('td');
     volumeCell.className = 'table-volume';
     const cached = marketCache.get(asset.symbol);
-    if (usesNolanApi && asset.backendAvailable === false) {
+    const failure = rowFailures.get(asset.symbol);
+    if (usesNolanApi && !state.directoryLoaded) {
+      priceCell.append('—', tableNote(state.batchLoading ? 'Loading…' : 'Unavailable'));
+      volumeCell.append('—');
+    } else if (usesNolanApi && asset.backendAvailable === false) {
       priceCell.append('—', tableNote('Awaiting API'));
       volumeCell.append('—', tableNote('Unavailable'));
     } else if (cached) {
       const freshness = classifyFreshness(cached.data, { staleAfterMs: APP_CONFIG.staleAfterMs });
       const volume = formatVolume(cached.data.market);
-      priceCell.append(formatUsdPrice(cached.data.market.priceUsd), tableNote(freshness.badge));
+      const unavailable = cached.marketStatus === 'unavailable';
+      priceCell.append(formatUsdPrice(cached.data.market.priceUsd), tableNote(unavailable ? 'Unavailable' : failure ? 'Refresh failed' : freshness.badge));
       volumeCell.append(volume.display, tableNote(volume.available ? volume.unitLabel : 'Unavailable'));
       const receivedAt = cached.data.retrievedAt;
       const receivedDate = receivedAt ? new Date(receivedAt) : null;
-      priceCell.title = receivedDate && Number.isFinite(receivedDate.getTime())
-        ? `Response received ${timestamp.format(receivedDate)} UTC. ${freshness.description}` : freshness.description;
-      volumeCell.title = volume.exact;
+      const receipt = receivedDate && Number.isFinite(receivedDate.getTime()) ? `Response received ${timestamp.format(receivedDate)} UTC. ` : '';
+      priceCell.title = failure ? `Latest refresh failed. Showing an earlier quote. ${receipt}${failure.message || ''}` : `${receipt}${freshness.description}`;
+      volumeCell.title = failure ? `Latest refresh failed. Earlier volume: ${volume.exact}` : volume.exact;
     } else {
-      priceCell.append('—', tableNote('View price'));
-      volumeCell.append('—', tableNote('Not requested'));
+      priceCell.append('—', tableNote(failure ? 'Unavailable' : 'Loading…'));
+      volumeCell.append('—', tableNote(failure ? 'Unavailable' : 'Loading…'));
+      if (failure) priceCell.title = failure.message || 'The API did not return a usable quote.';
     }
     const actionCell = document.createElement('td');
     actionCell.className = 'table-action';
@@ -286,9 +310,9 @@ function renderDirectory(query = '') {
     action.type = 'button';
     action.className = 'row-quote-button';
     action.dataset.asset = asset.symbol;
-    action.textContent = usesNolanApi && asset.backendAvailable === false ? 'Status' : cached ? 'Details' : 'View';
-    action.setAttribute('aria-label', `${usesNolanApi && asset.backendAvailable === false ? 'View API support status for' : cached ? 'View details for' : 'Request price for'} ${asset.name}`);
-    action.disabled = state.rateLimitedUntil > Date.now();
+    action.textContent = usesNolanApi && asset.backendAvailable === false ? 'Status' : 'Details';
+    action.setAttribute('aria-label', `${usesNolanApi && asset.backendAvailable === false ? 'View API support status for' : 'View details for'} ${asset.name}`);
+    action.disabled = !usesNolanApi && state.rateLimitedUntil > Date.now();
     actionCell.append(action);
     item.append(watchCell, assetCell, priceCell, volumeCell, actionCell);
     list.append(item);
@@ -386,14 +410,13 @@ function showAwaitingSupport(asset) {
 function renderAsset(response, { announceResult = true } = {}) {
   const { data, mode } = response;
   const simulated = data.simulated;
-  marketCache.set(data.symbol, response);
+  state.response = response;
+  recordMarketResponse(response);
   if (response.contract === 'nolan-v1') {
     state.directoryLoaded = true;
     $('directory-caption').textContent = 'Team catalog. Only API-supported assets can return prices.';
-    if (response.directory) {
-      directory = teamDirectory(response.directory);
-      renderApiExamples(directory);
-    }
+    // The batch's onDirectory callback owns current catalog membership.
+    // Selecting a cached quote must not restore its older catalog snapshot.
   }
   $('detail-symbol').textContent = data.symbol;
   $('detail-name').textContent = data.name;
@@ -408,14 +431,20 @@ function renderAsset(response, { announceResult = true } = {}) {
   $('detail-volume').setAttribute('aria-label', `24-hour volume: ${volume.exact}${simulated ? ', simulated' : ''}`);
   $('price-caption').textContent = !marketAvailable ? 'Market quote unavailable' : simulated ? 'Simulated price' : 'Last-traded price';
   $('volume-caption').textContent = volume.exact;
-  $('market-notice').hidden = marketAvailable;
-  $('market-notice').textContent = !marketAvailable
-    ? `Market data is unavailable. ${response.marketError?.message || 'The API did not return a usable quote.'} The database profile is shown below.` : '';
+  const refreshFailure = rowFailures.get(data.symbol);
+  $('market-notice').hidden = marketAvailable && !refreshFailure;
+  $('market-notice').textContent = refreshFailure
+    ? `The latest refresh failed. Showing the earlier quote received at ${data.retrievedAt ? timestamp.format(new Date(data.retrievedAt)) + ' UTC' : 'the previous successful lookup'}. ${refreshFailure.message || ''}`
+    : !marketAvailable ? `Market data is unavailable. ${response.marketError?.message || 'The API did not return a usable quote.'} The database profile is shown below.` : '';
   $('detail-category').textContent = data.category || 'Not provided by the API';
   $('detail-description').textContent = data.description || 'A description was not provided by the API.';
   $('detail-category').classList.toggle('missing-field', !data.category);
   $('detail-description').classList.toggle('missing-field', !data.description);
   renderFreshness();
+  if (refreshFailure && marketAvailable) {
+    $('detail-badge').textContent = 'Earlier quote';
+    $('detail-badge').dataset.kind = 'stale';
+  }
   renderPriceChart(response);
   $('profile-source-copy').textContent = simulated && mode === 'demo'
     ? 'Sample asset profiles.'
@@ -438,6 +467,7 @@ function renderAsset(response, { announceResult = true } = {}) {
 }
 
 async function search(query, { scroll = false, refresh = false, automatic = false } = {}) {
+  if (usesNolanApi) return selectCatalogAsset(query, { scroll, refresh, automatic });
   const term = query.trim().replace(/\s+/g, ' ').toLowerCase();
   if (excludedQueries.has(term)) {
     state.controller?.abort();
@@ -456,7 +486,7 @@ async function search(query, { scroll = false, refresh = false, automatic = fals
   }
   if (usesNolanApi && !state.directoryLoaded) {
     if (!automatic) state.lastQuery = query.trim();
-    if (!state.loading) initializeNolanDirectory();
+    if (!state.loading) refreshAllMarkets();
     else if (!automatic) announce('The database catalog is loading. Please wait before selecting an asset.');
     return;
   }
@@ -533,10 +563,10 @@ async function search(query, { scroll = false, refresh = false, automatic = fals
 
 $('refresh-asset').addEventListener('click', () => search(state.selectedSymbol || state.lastQuery, { refresh: true }));
 function maybeAutoRefresh() {
-  if (document.hidden || state.loading || !state.autoRefreshQuery || Date.now() < state.nextRefreshAt ||
+  if (document.hidden || state.loading || state.batchLoading || Date.now() < state.nextRefreshAt ||
     Date.now() < state.cooldownUntil || Date.now() < state.rateLimitedUntil) return;
-  if (usesNolanApi && !state.directoryLoaded) initializeNolanDirectory();
-  else search(state.autoRefreshQuery, { refresh: true, automatic: true });
+  if (usesNolanApi) refreshAllMarkets();
+  else if (state.autoRefreshQuery) search(state.autoRefreshQuery, { refresh: true, automatic: true });
 }
 setInterval(() => {
   updateRefreshControl();
@@ -544,12 +574,23 @@ setInterval(() => {
 }, 1000);
 function updateDisplayedFreshness() {
   renderFreshness();
-  // Reclassify saved table snapshots without requesting new data.
+  if (state.response && rowFailures.has(state.response.data.symbol)) {
+    $('detail-badge').textContent = 'Earlier quote';
+    $('detail-badge').dataset.kind = 'stale';
+  }
   renderDirectory(input.value);
 }
 setInterval(updateDisplayedFreshness, 30000);
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden) {
+  if (document.hidden && state.batchLoading) {
+    // Stop queued and in-flight work while hidden; resume a single due batch.
+    state.batchController?.abort();
+    state.batchId += 1;
+    state.batchController = null;
+    state.batchLoading = false;
+    state.nextRefreshAt = Date.now();
+    $('detail-panel').setAttribute('aria-busy', 'false');
+  } else if (!document.hidden) {
     updateDisplayedFreshness();
     maybeAutoRefresh();
   }
@@ -620,11 +661,11 @@ window.addEventListener('storage', (event) => {
 });
 $('error-action').addEventListener('click', () => {
   if (usesNolanApi && (!state.directoryLoaded || $('error-action').dataset.action === 'catalog')) {
-    initializeNolanDirectory();
+    refreshAllMarkets();
     return;
   }
   if ($('error-action').dataset.action === 'suggestion') { input.value = ''; renderDirectory(); search($('error-action').dataset.suggestedSymbol); }
-  else search(state.lastQuery);
+  else search(state.lastQuery, { refresh: usesNolanApi });
 });
 document.addEventListener('keydown', (event) => {
   if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey || dialog.open) return;
@@ -724,46 +765,166 @@ if (!isDemo) {
   $('faq-refresh-answer').textContent = 'The selected asset reloads on page load and every 30 seconds while this tab is visible. You can also reload it manually. Sample prices remain fixed.';
 }
 
-async function initializeNolanDirectory() {
-  if (state.rateLimitedUntil > Date.now()) return;
-  state.controller?.abort();
-  const requestIdAtStart = ++state.requestId;
-  const controller = new AbortController();
-  state.controller = controller;
-  state.loading = true;
-  setPanelState('loading');
+function updateCatalogProgress() {
+  const status = $('catalog-load-status');
+  if (!status) return;
+  const unavailable = directory.filter((asset) => asset.backendAvailable === false || rowFailures.has(asset.symbol) || marketCache.get(asset.symbol)?.marketStatus === 'unavailable').length;
+  status.textContent = state.batchLoading ? `Loading ${state.batchCompleted} of ${state.batchTotal || directory.length}` : unavailable ? `${unavailable} ${unavailable === 1 ? 'quote' : 'quotes'} unavailable` : '';
+  status.hidden = !status.textContent;
+}
+
+function selectedFailure(error, symbol) {
+  state.lastQuery = symbol;
+  showError(error, symbol);
+  state.selectedSymbol = symbol;
+  updateDirectorySelection();
+}
+
+function selectCatalogAsset(query, { scroll = false, refresh = false, automatic = false } = {}) {
+  const term = query.trim().replace(/\s+/g, ' ').toLowerCase();
+  state.lastQuery = query.trim();
+  if (!state.directoryLoaded) {
+    state.pendingQuery = query.trim();
+    const target = TEAM_ASSETS.find((asset) => asset.symbol.toLowerCase() === term || asset.name.toLowerCase() === term);
+    state.desiredSymbol = target?.symbol || '';
+    if (target) state.selectedSymbol = target.symbol;
+    if (!state.batchLoading) refreshAllMarkets();
+    setPanelState('loading');
+    if (!automatic) announce('Loading cryptocurrency prices.');
+    return;
+  }
+  const asset = directory.find((item) => item.symbol.toLowerCase() === term || item.name.toLowerCase() === term);
+  state.pendingQuery = null;
+  if (!asset || excludedQueries.has(term)) {
+    state.desiredSymbol = '';
+    showError(new ApiError(term ? 'NOT_FOUND' : 'EMPTY_QUERY', 'Choose a full name or ticker from the catalog.'), query);
+    updateRefreshControl();
+    return;
+  }
+  state.desiredSymbol = asset.symbol;
+  state.selectedSymbol = asset.symbol;
+  state.lastQuery = asset.symbol;
+  input.removeAttribute('aria-invalid');
+  if (asset.backendAvailable === false) {
+    showAwaitingSupport(asset);
+  } else {
+    const response = marketCache.get(asset.symbol);
+    if (response) renderAsset(response, { announceResult: !automatic });
+    else if (rowFailures.has(asset.symbol) && !state.batchLoading) selectedFailure(rowFailures.get(asset.symbol), asset.symbol);
+    else {
+      state.response = null;
+      setPanelState('loading');
+      updateDirectorySelection();
+      if (!automatic) announce(`Loading ${asset.name}.`);
+    }
+    if (refresh) {
+      if (state.batchLoading || state.cooldownUntil > Date.now() || state.rateLimitedUntil > Date.now()) {
+        if (!automatic) announce(state.batchLoading ? 'Prices are updating. Please wait.' : 'Please wait before requesting another refresh.');
+      } else refreshAllMarkets({ preferredSymbol: asset.symbol });
+    } else if (!response && !state.batchLoading && !rowFailures.has(asset.symbol)) refreshAllMarkets({ preferredSymbol: asset.symbol });
+  }
   updateRefreshControl();
-  $('directory-caption').textContent = 'Loading database profiles…';
+  if (scroll && window.matchMedia('(max-width: 1000px)').matches) $('detail-panel').scrollIntoView({ block: 'start' });
+}
+
+async function refreshAllMarkets({ preferredSymbol = state.desiredSymbol || 'BTC' } = {}) {
+  if (state.batchLoading || state.rateLimitedUntil > Date.now()) return;
+  if (document.hidden) {
+    state.nextRefreshAt = Date.now();
+    return;
+  }
+  const batchId = ++state.batchId;
+  const controller = new AbortController();
+  state.batchController = controller;
+  state.batchLoading = true;
+  state.batchCompleted = 0;
+  state.batchTotal = TEAM_ASSETS.length;
+  state.batchPending = new Set(TEAM_ASSETS.map((asset) => asset.symbol));
+  state.cooldownUntil = Date.now() + (APP_CONFIG.refreshCooldownMs || 5000);
+  const active = () => batchId === state.batchId && !controller.signal.aborted;
+  if (!state.response) setPanelState('loading');
+  else $('detail-panel').setAttribute('aria-busy', 'true');
+  updateRefreshControl();
+  updateCatalogProgress();
+  renderDirectory(input.value);
+  const completed = (symbol) => {
+    if (state.batchPending.delete(symbol)) state.batchCompleted += 1;
+    updateCatalogProgress();
+  };
   try {
-    const assets = await loadAssetDirectory({ signal: controller.signal });
-    if (requestIdAtStart !== state.requestId || controller.signal.aborted) return;
-    directory = teamDirectory(assets);
-    renderApiExamples(directory);
-    renderDirectory(input.value);
-    const supported = directory.filter((asset) => asset.backendAvailable === true);
-    if (!supported.length) throw new ApiError('EMPTY_CATALOG', 'No team-catalog assets are available from the database API yet. The catalog remains visible, but prices require backend support.');
-    state.directoryLoaded = true;
-    $('directory-caption').textContent = 'Team catalog. Only API-supported assets can return prices.';
-    if (state.requestId === requestIdAtStart) {
-      const firstSymbol = supported.some((asset) => asset.symbol === 'BTC') ? 'BTC' : supported[0].symbol;
-      state.loading = false;
-      search(state.lastQuery || firstSymbol);
+    const symbols = [preferredSymbol, ...TEAM_ASSETS.map((asset) => asset.symbol)].filter(Boolean);
+    const result = await loadMarketDirectory({
+      signal: controller.signal,
+      symbols,
+      concurrency: 3,
+      launchIntervalMs: 250,
+      onDirectory(records) {
+        if (!active()) return;
+        directory = teamDirectory(records);
+        state.directoryLoaded = true;
+        const supported = directory.filter((asset) => asset.backendAvailable === true);
+        state.batchPending = new Set(supported.map((asset) => asset.symbol));
+        state.batchTotal = supported.length;
+        renderApiExamples(directory);
+        if (state.pendingQuery !== null) selectCatalogAsset(state.pendingQuery, { automatic: true });
+        else if (state.desiredSymbol && directory.find((asset) => asset.symbol === state.desiredSymbol)?.backendAvailable === false) showAwaitingSupport(directory.find((asset) => asset.symbol === state.desiredSymbol));
+        renderDirectory(input.value);
+        updateCatalogProgress();
+      },
+      onResult(response) {
+        if (!active()) return;
+        const symbol = response.data.symbol;
+        rowFailures.delete(symbol);
+        recordMarketResponse(response);
+        applyRateLimit(response.marketError);
+        completed(symbol);
+        if (state.desiredSymbol === symbol) renderAsset(response, { announceResult: !state.response });
+        else renderDirectory(input.value);
+        updateRefreshControl();
+      },
+      onError(error, symbol) {
+        if (!active()) return;
+        rowFailures.set(symbol, error);
+        applyRateLimit(error);
+        completed(symbol);
+        if (state.desiredSymbol === symbol) {
+          const earlier = marketCache.get(symbol);
+          if (earlier) renderAsset(earlier, { announceResult: false });
+          else selectedFailure(error, symbol);
+        }
+        renderDirectory(input.value);
+      },
+    });
+    if (!active()) return;
+    if (result.retryAfterMs !== undefined && result.stopped) state.rateLimitedUntil = Math.max(state.rateLimitedUntil, Date.now() + result.retryAfterMs);
+    for (const symbol of result.pendingSymbols || []) {
+      rowFailures.set(symbol, new ApiError('RETRY_WAIT', 'The API asked us to wait before requesting more prices.'));
+      completed(symbol);
+    }
+    if (state.desiredSymbol && rowFailures.has(state.desiredSymbol)) {
+      const earlier = marketCache.get(state.desiredSymbol);
+      if (earlier) renderAsset(earlier, { announceResult: false });
+      else selectedFailure(rowFailures.get(state.desiredSymbol), state.desiredSymbol);
     }
   } catch (error) {
-    if (requestIdAtStart !== state.requestId || controller.signal.aborted) return;
+    if (!active()) return;
     applyRateLimit(error);
-    $('directory-caption').textContent = 'The database catalog could not be loaded.';
-    showError(error, '');
+    for (const symbol of state.batchPending) rowFailures.set(symbol, error);
+    if (state.response) renderAsset(state.response, { announceResult: false });
+    else selectedFailure(error, state.desiredSymbol || 'BTC');
   } finally {
-    if (state.requestId === requestIdAtStart) {
-      state.loading = false;
-      state.controller = null;
-      state.nextRefreshAt = Date.now() + AUTO_REFRESH_MS;
+    if (active()) {
+      state.batchLoading = false;
+      state.batchController = null;
+      state.nextRefreshAt = Math.max(Date.now() + AUTO_REFRESH_MS, state.rateLimitedUntil);
+      $('detail-panel').setAttribute('aria-busy', 'false');
+      renderDirectory(input.value);
+      updateCatalogProgress();
       updateRefreshControl();
     }
   }
 }
 
 renderDirectory();
-if (usesNolanApi) initializeNolanDirectory();
+if (usesNolanApi) refreshAllMarkets();
 else search('BTC');

@@ -4,13 +4,13 @@ Hey Nolan and Alex,
 
 The attached ZIP has the updated frontend, local demo, unchanged backend candidate, current status and reply templates. I already have your infrastructure packet, middleware write-up and backend upgrade files; no need to resend them.
 
-The frontend now has the Explore layout, watchlist/sorting, all 27 requested coins, JSON under Specifications, selected-asset refresh every 30 seconds and on page load, and a session price chart. Monero is removed from the website. The 96 automated frontend checks pass locally; this includes validation of the new timestamps, volume units and USD product metadata. The latest changes still need hosted verification; earlier Safari checks against our real API do not establish cloud deployment of this release.
+The frontend now has the Explore layout, watchlist/sorting, all 27 requested coins with local logos, JSON under Specifications, automatic market prices/volume for every supported coin on load and 30 seconds after each batch, and session price charts. Monero is removed from the website. The 115 automated frontend checks pass locally; this includes validation of the new timestamps, volume units and USD product metadata. The latest changes still need hosted verification; earlier Safari checks against our real API do not establish cloud deployment of this release.
 
 The public API was rechecked at 22:10 UTC: /api/db/cryptos now returns all 27 requested coins with categories/descriptions, and BTC, SHIB and POL market requests succeed with product, timestamp and volume-unit fields. Those gaps have progressed; we don't need another 27-coin implementation request. This does not establish the exact deployed source version or complete every route/test.
 
 Nolan - please confirm the deployed source/full hashes, actual schema/seed or migration used, product coverage and remaining combined JSON/error contract. We still need local test results and actual middleware/API screenshots. Keep unsupported markets explicit and stored sample prices separate from live responses.
 
-Alex - please send the actual 27-coin schema/query evidence and deployed change provenance with Nolan, and review the eight-file frontend release with me. Send the exact changes, protected backup, validation and restore plan before any remote write. We still need actual cloud/service/database/private-network screenshots. Keep the existing /api/ gateway and unrelated files intact.
+Alex - please send the actual 27-coin schema/query evidence and deployed change provenance with Nolan, and review the 36-file frontend release with me. Send the exact changes, protected backup, validation and restore plan before any remote write. We still need actual cloud/service/database/private-network screenshots. Keep the existing /api/ gateway and unrelated files intact.
 
 Please fill your RETURN_TO_JAKE template and return missing screenshots, sanitized JSON examples and proposed changed files. Aim for Friday, Nov. 20, before the Sunday, Nov. 22, 11:59 p.m. deadline. Mark each item done/planned/blocked with an owner and next step. I propose II (VPC) and VII (network diagram) as our two additions; please confirm.
 

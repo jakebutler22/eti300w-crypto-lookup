@@ -1,5 +1,14 @@
 # Verification record
 
+## All-coin loading and local logos · November 18, 2026
+
+- `npm test`: **115/115 passed**. The 17 bulk-loader tests cover one catalog request, all-coin delivery, bounded concurrency/pacing, partial failures, per-request timeouts, cancellation and rate-limit stops. Two logo checks verify unique self-contained local SVGs for the exact 27-coin catalog, with license and pinned provenance.
+- A real read-only `loadMarketDirectory` request to the public API returned **27/27 available quotes**, zero errors and zero pending symbols in 6.7 seconds. Every response had a provider timestamp and explicit volume unit. This is a point-in-time API observation, not a deployment claim.
+- Actual Safari through `npm run serve` showed all 27 catalog rows with market prices/volume and zero loading/unavailable rows after the batch. Filecoin opened from cache with its own local logo, category/description, price and base-asset volume; its session chart grew from one to two received quotes after automatic refresh. Specifications opened the original JSON with the FIL market endpoint, and Escape closed the dialog. A page reload started another full automatic catalog load. These are local browser checks using the real public API, not hosted deployment verification.
+- HTTP checks confirmed all 36 runtime paths were served locally, including every SVG and the license. HTML IDs/script references and `git diff --check` passed.
+- The web release contains **36 files**: eight application files, 27 local SVG logos and their MIT license. Both release modes preserve the `assets/coins/` structure.
+- The following sections preserve earlier checks and their original scope. No AWS writes were performed for this update; the new frontend still needs deployment and hosted acceptance checks.
+
 ## Production wording and default mode update
 
 The page is titled Explore cryptocurrency. Static production HTML/FAQs contain no sample/demo/simulated boilerplate. Default mode is API, with a localhost-only development proxy provided by `npm run serve`. The explicit offline preview remains truthfully labeled. All **96/96 tests pass**, including default live requests and failure without fixture fallback. HTTP checks of the local preview returned the 27-record real catalog and a Coinbase BTC response; non-runtime files and unsupported proxy routes returned 404. Actual Safari rendered a live BTC quote with an API snapshot label and no sample wording.

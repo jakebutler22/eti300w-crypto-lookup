@@ -1,5 +1,5 @@
-import { APP_CONFIG } from "./config.js?v=20261118-live";
-import { DEMO_ASSETS } from "./data/demo-assets.js?v=20261118-live";
+import { APP_CONFIG } from "./config.js?v=20261118-full";
+import { DEMO_ASSETS } from "./data/demo-assets.js?v=20261118-full";
 
 export class ApiError extends Error {
   constructor(code, message, { status, cause, retryAfterMs, responseBody } = {}) {
@@ -355,6 +355,68 @@ function nolanMarketMetadata(market, symbol) {
   };
 }
 
+async function loadNolanMarket(selected, { profiles, rows, profile, marketBase, signal, config, requestJson }) {
+  const marketEndpoint = `${marketBase}/${encodeURIComponent(selected.symbol)}`;
+  let market = null;
+  let marketError = null;
+  let metadata = { volumeUnit: null, asOf: null };
+  try {
+    market = await requestJson(marketEndpoint, { stage: "market", symbol: selected.symbol });
+    if (!isRecord(market) || !nonemptyString(market.symbol) ||
+      market.symbol.trim().toUpperCase() !== selected.symbol || !nonemptyString(market.source) ||
+      !["price", "volume_24h"].every((field) =>
+        typeof market[field] === "number" && Number.isFinite(market[field]) && market[field] >= 0,
+      )) {
+      throw new ApiError("INVALID_RESPONSE", "The market service returned an invalid symbol, source, price, or 24-hour volume.");
+    }
+    metadata = nolanMarketMetadata(market, selected.symbol);
+  } catch (cause) {
+    const recoverable = cause instanceof ApiError && (
+      ["NETWORK_ERROR", "TIMEOUT", "INVALID_JSON", "INVALID_RESPONSE", "PRODUCT_UNAVAILABLE"].includes(cause.code) ||
+      (cause.code === "HTTP_ERROR" && (cause.status === 429 || cause.status >= 500))
+    );
+    if (signal?.aborted || config.allowPartialMarket !== true || !recoverable) throw cause;
+    if (cause.responseBody !== undefined) market = cause.responseBody;
+    marketError = { code: cause.code, message: cause.message };
+    if (cause.status !== undefined) marketError.status = cause.status;
+    if (cause.retryAfterMs !== undefined) marketError.retryAfterMs = cause.retryAfterMs;
+  }
+  const warnings = [];
+  if (!selected.category) warnings.push("Category is unavailable in the database response.");
+  if (!selected.description) warnings.push("Description is unavailable in the database response.");
+  if (marketError) {
+    warnings.push(`Market data unavailable: ${marketError.message}`);
+  } else {
+    if (!metadata.asOf) warnings.push("The market response does not include a valid provider quote timestamp.");
+    if (!metadata.volumeUnit) warnings.push("The market response does not identify a valid base-asset unit for 24-hour volume.");
+  }
+  return {
+    data: {
+      ...selected,
+      market: {
+        priceUsd: marketError ? null : market.price,
+        volume24h: marketError ? null : market.volume_24h,
+        volumeUnit: marketError ? null : metadata.volumeUnit,
+        asOf: marketError ? null : metadata.asOf,
+      },
+      sources: { profile: "MySQL via Python API", market: marketError ? null : market.source.trim() },
+      simulated: false,
+      // Browser receipt time is separate from both provider_timestamp and the
+      // middleware's retrieved_at. Neither advances when the UI rerenders.
+      retrievedAt: new Date().toISOString(),
+    },
+    raw: { profiles, market },
+    endpointUrl: null,
+    endpointUrls: { profile, market: marketEndpoint },
+    directory: rows.map(({ symbol, name, category }) => ({ symbol, name, category })),
+    mode: "api",
+    contract: "nolan-v1",
+    marketStatus: marketError ? "unavailable" : "available",
+    marketError,
+    warnings,
+  };
+}
+
 async function lookupFromNolanApi(query, { signal, config }) {
   const { profile, marketBase } = nolanEndpoints(config);
   return withApiRequest({ signal, config }, async (requestJson, ensureActive) => {
@@ -372,65 +434,7 @@ async function lookupFromNolanApi(query, { signal, config }) {
     }
     ensureActive();
     const selected = matches[0];
-    const marketEndpoint = `${marketBase}/${encodeURIComponent(selected.symbol)}`;
-    let market = null;
-    let marketError = null;
-    let metadata = { volumeUnit: null, asOf: null };
-    try {
-      market = await requestJson(marketEndpoint, { stage: "market", symbol: selected.symbol });
-      if (!isRecord(market) || !nonemptyString(market.symbol) ||
-        market.symbol.trim().toUpperCase() !== selected.symbol || !nonemptyString(market.source) ||
-        !["price", "volume_24h"].every((field) =>
-          typeof market[field] === "number" && Number.isFinite(market[field]) && market[field] >= 0,
-        )) {
-        throw new ApiError("INVALID_RESPONSE", "The market service returned an invalid symbol, source, price, or 24-hour volume.");
-      }
-      metadata = nolanMarketMetadata(market, selected.symbol);
-    } catch (cause) {
-      const recoverable = cause instanceof ApiError && (
-        ["NETWORK_ERROR", "TIMEOUT", "INVALID_JSON", "INVALID_RESPONSE", "PRODUCT_UNAVAILABLE"].includes(cause.code) ||
-        (cause.code === "HTTP_ERROR" && (cause.status === 429 || cause.status >= 500))
-      );
-      if (signal?.aborted || config.allowPartialMarket !== true || !recoverable) throw cause;
-      if (cause.responseBody !== undefined) market = cause.responseBody;
-      marketError = { code: cause.code, message: cause.message };
-      if (cause.status !== undefined) marketError.status = cause.status;
-      if (cause.retryAfterMs !== undefined) marketError.retryAfterMs = cause.retryAfterMs;
-    }
-    const warnings = [];
-    if (!selected.category) warnings.push("Category is unavailable in the database response.");
-    if (!selected.description) warnings.push("Description is unavailable in the database response.");
-    if (marketError) {
-      warnings.push(`Market data unavailable: ${marketError.message}`);
-    } else {
-      if (!metadata.asOf) warnings.push("The market response does not include a valid provider quote timestamp.");
-      if (!metadata.volumeUnit) warnings.push("The market response does not identify a valid base-asset unit for 24-hour volume.");
-    }
-    return {
-      data: {
-        ...selected,
-        market: {
-          priceUsd: marketError ? null : market.price,
-          volume24h: marketError ? null : market.volume_24h,
-          volumeUnit: marketError ? null : metadata.volumeUnit,
-          asOf: marketError ? null : metadata.asOf,
-        },
-        sources: { profile: "MySQL via Python API", market: marketError ? null : market.source.trim() },
-        simulated: false,
-        // Browser receipt time is separate from both provider_timestamp and the
-        // middleware's retrieved_at. Neither advances when the UI rerenders.
-        retrievedAt: new Date().toISOString(),
-      },
-      raw: { profiles, market },
-      endpointUrl: null,
-      endpointUrls: { profile, market: marketEndpoint },
-      directory: rows.map(({ symbol, name, category }) => ({ symbol, name, category })),
-      mode: "api",
-      contract: "nolan-v1",
-      marketStatus: marketError ? "unavailable" : "available",
-      marketError,
-      warnings,
-    };
+    return loadNolanMarket(selected, { profiles, rows, profile, marketBase, signal, config, requestJson });
   });
 }
 
@@ -447,6 +451,156 @@ export async function loadAssetDirectory({ signal, config = APP_CONFIG } = {}) {
     const raw = await requestJson(profile, { stage: "catalog" });
     return validateCatalog(raw).map(({ symbol, name, category }) => ({ symbol, name, category }));
   });
+}
+
+function waitForMarketStart(milliseconds, signal) {
+  if (signal.aborted) return Promise.reject(abortedError());
+  if (milliseconds <= 0) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const onAbort = () => {
+      clearTimeout(timer);
+      signal.removeEventListener("abort", onAbort);
+      reject(abortedError());
+    };
+    const timer = setTimeout(() => {
+      signal.removeEventListener("abort", onAbort);
+      resolve();
+    }, milliseconds);
+    signal.addEventListener("abort", onAbort, { once: true });
+  });
+}
+
+/**
+ * Load one validated database catalog and progressively retrieve its markets.
+ * Each request has its own timeout; at most three market requests are in flight,
+ * with 250 ms between starts by default. A supplied symbol list orders/restricts
+ * the returned database rows, and can never introduce an unsupported symbol.
+ * Explicit retry guidance stops queued work without inventing failed responses.
+ */
+export async function loadMarketDirectory({
+  signal, config = APP_CONFIG, onDirectory, onResult, onError, symbols,
+  concurrency = 3, launchIntervalMs = 250,
+} = {}) {
+  if (signal?.aborted) throw abortedError();
+  if (!config || !["demo", "api"].includes(config.mode)) {
+    throw new ApiError("CONFIGURATION_ERROR", "Choose demo or api mode in config.js.");
+  }
+  if (!Number.isInteger(concurrency) || concurrency < 1 ||
+    !Number.isFinite(launchIntervalMs) || launchIntervalMs < 0 || launchIntervalMs > 5000 ||
+    [onDirectory, onResult, onError].some((callback) => callback !== undefined && typeof callback !== "function") ||
+    (symbols !== undefined && (!Array.isArray(symbols) || symbols.some((symbol) =>
+      typeof symbol !== "string" || !/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(symbol.trim()))))) {
+    throw new ApiError("CONFIGURATION_ERROR", "The market directory request options are invalid.");
+  }
+  const requestedSymbols = symbols === undefined ? null : [...new Set(symbols.map((symbol) => symbol.trim().toUpperCase()))];
+  const controller = new AbortController();
+  const onAbort = () => controller.abort();
+  signal?.addEventListener("abort", onAbort, { once: true });
+  const ensureActive = () => {
+    if (controller.signal.aborted) throw abortedError();
+  };
+  const orderRows = (rows) => requestedSymbols === null ? rows : requestedSymbols
+    .map((symbol) => rows.find((row) => row.symbol === symbol)).filter(Boolean);
+  try {
+    if (config.mode === "demo") {
+      const directory = getAssetDirectory();
+      await onDirectory?.(directory);
+      ensureActive();
+      await demoDelay(controller.signal);
+      const responses = [];
+      for (const asset of orderRows(DEMO_ASSETS)) {
+        ensureActive();
+        const response = { data: copyAsset(asset), raw: { data: copyAsset(asset) }, endpointUrl: null, mode: "demo" };
+        responses.push(response);
+        await onResult?.(response);
+      }
+      ensureActive();
+      return { directory, responses, errors: [], stopped: false, retryAfterMs: undefined, pendingSymbols: [] };
+    }
+    if (apiContract(config) !== "nolan-v1") {
+      throw new ApiError("CONFIGURATION_ERROR", "Loading every market requires the database-backed nolan-v1 contract.");
+    }
+    const { profile, marketBase } = nolanEndpoints(config);
+    const { profiles, rows } = await withApiRequest({ signal: controller.signal, config }, async (requestJson) => {
+      const profiles = await requestJson(profile, { stage: "catalog" });
+      const rows = validateCatalog(profiles);
+      if (new Set(rows.map(({ symbol }) => symbol)).size !== rows.length) {
+        throw new ApiError("AMBIGUOUS_MATCH", "The database contains duplicate cryptocurrency tickers. Ask the database owner to resolve them.");
+      }
+      return { profiles, rows };
+    });
+    const directory = rows.map(({ symbol, name, category }) => ({ symbol, name, category }));
+    await onDirectory?.(directory);
+    ensureActive();
+    const targets = orderRows(rows);
+    const responses = [];
+    const errors = [];
+    let nextIndex = 0;
+    let nextStartAt = 0;
+    let startQueue = Promise.resolve();
+    let stopped = false;
+    let retryAfterMs;
+    const stopForRetry = (error) => {
+      if (error?.status !== 429 && !(error?.status === 503 && Number.isFinite(error.retryAfterMs))) return;
+      stopped = true;
+      if (Number.isFinite(error.retryAfterMs)) retryAfterMs = Math.max(retryAfterMs ?? 0, error.retryAfterMs);
+    };
+    // Serialize only request starts. The market requests themselves run in parallel.
+    const nextTarget = () => {
+      const turn = startQueue.then(async () => {
+        ensureActive();
+        if (stopped || nextIndex >= targets.length) return null;
+        await waitForMarketStart(Math.max(0, nextStartAt - Date.now()), controller.signal);
+        ensureActive();
+        if (stopped) return null;
+        nextStartAt = Date.now() + launchIntervalMs;
+        return targets[nextIndex++];
+      });
+      startQueue = turn.catch(() => {});
+      return turn;
+    };
+    const worker = async () => {
+      while (true) {
+        const selected = await nextTarget();
+        if (!selected) return;
+        let response;
+        try {
+          response = await withApiRequest({ signal: controller.signal, config }, (requestJson) =>
+            loadNolanMarket(selected, {
+              profiles, rows, profile, marketBase, signal: controller.signal, config, requestJson,
+            }));
+        } catch (error) {
+          ensureActive();
+          if (error?.code === "ABORTED") throw error;
+          errors.push({ symbol: selected.symbol, error });
+          stopForRetry(error);
+          await onError?.(error, selected.symbol);
+          ensureActive();
+          continue;
+        }
+        ensureActive();
+        responses.push(response);
+        stopForRetry(response.marketError);
+        await onResult?.(response);
+        ensureActive();
+      }
+    };
+    await Promise.all(Array.from({ length: Math.min(3, concurrency, targets.length) }, worker));
+    ensureActive();
+    const indices = new Map(targets.map(({ symbol }, index) => [symbol, index]));
+    responses.sort((a, b) => indices.get(a.data.symbol) - indices.get(b.data.symbol));
+    errors.sort((a, b) => indices.get(a.symbol) - indices.get(b.symbol));
+    return {
+      directory, responses, errors, stopped, retryAfterMs,
+      pendingSymbols: targets.slice(nextIndex).map(({ symbol }) => symbol),
+    };
+  } catch (error) {
+    controller.abort();
+    if (signal?.aborted) throw abortedError();
+    throw error;
+  } finally {
+    signal?.removeEventListener("abort", onAbort);
+  }
 }
 
 /**

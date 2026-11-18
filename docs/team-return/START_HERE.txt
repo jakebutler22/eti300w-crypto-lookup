@@ -10,7 +10,7 @@ CONTENTS
   RELEASE_REVIEW.md          Exact frontend candidate and acceptance checklist
   BACKEND_CANDIDATE_REVIEW.md New backend proposals, compatibility and open review
   REQUESTED_CATALOG.csv      Exact 27 requested symbols, names and categories
-  01-web-release-API/        Eight runtime files, configured for same-origin /api
+  01-web-release-API/        36 runtime files, configured for same-origin /api
   02-local-preview-DEMO/     Same interface with fixed, labeled sample data
   03-backend-candidate-REVIEW-ONLY/  Unchanged candidate source; do not execute/deploy
   release/                  Original API tar.gz and integrity manifests
@@ -24,7 +24,7 @@ From the extracted team folder, run:
 Open http://127.0.0.1:8000/ and stop the server with Ctrl+C when done.
 Double-clicking index.html is unsupported because the application uses JavaScript modules.
 The demo lists all 27 requested coins with fixed, labeled simulated values.
-The selected asset refreshes every 30 seconds while visible and on initial page load.
+All supported assets load automatically and refresh together every 30 seconds after the prior batch completes while visible. Every coin has a local SVG logo.
 The chart plots only quotes received during this visit; it is not historical market data.
 Original JSON is under Specifications. Monero is excluded from website selections.
 
