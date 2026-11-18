@@ -24,7 +24,7 @@ Confirm what already exists before labeling files new. Deploy only these approve
 
 Do not point the old `combined-v1` setting at the candidate `/api/assets/<symbol>` route: their schemas and URL patterns differ. The frontend recognizes explicit HTTP 503 retry metadata; agree and test the backend combined-route error contract separately. See `BACKEND_CANDIDATE_REVIEW.md`.
 
-The frontend has passed 115 local automated checks. These do not establish backend candidate readiness or hosted verification.
+The frontend has passed 122 local automated checks. These do not establish backend candidate readiness or hosted verification.
 
 ## Acceptance after specific deployment approval
 

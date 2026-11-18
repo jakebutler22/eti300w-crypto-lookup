@@ -40,7 +40,7 @@ npm test
 python3 scripts/package_frontend.py --mode api
 ```
 
-All 115 automated checks pass with `npm test`. The release command writes a 36-file archive and SHA-256 manifest to `.artifacts/release/`; it does not deploy. Use [releases/explore-2026-11-18](releases/explore-2026-11-18/) for the reviewed API/demo archives and team handoff ZIP. The deployment contains 36 runtime files: eight application files, 27 local SVG coin logos, and their license. Preserve the `assets/coins/` directory structure in the web root.
+All 122 automated checks pass with `npm test`. The release command writes a 36-file archive and SHA-256 manifest to `.artifacts/release/`; it does not deploy. Use [releases/explore-2026-11-18](releases/explore-2026-11-18/) for the reviewed API/demo archives and team handoff ZIP. The deployment contains 36 runtime files: eight application files, 27 local SVG coin logos, and their license. Preserve the `assets/coins/` directory structure in the web root.
 
 ## Documentation and team handoff
 
@@ -48,4 +48,4 @@ All 115 automated checks pass with `npm test`. The release command writes a 36-f
 
 [Team reply templates and requests](docs/team-return/) identify the remaining evidence, release review and contribution work. Jake owns the frontend; Nolan owns Flask, database queries and provider integration; Alex owns infrastructure and database deployment. Actual hosted frontend verification, cloud screenshots and the final single submission document still need completion. Earlier infrastructure material and source reports retain their dates and attribution.
 
-All 27 coins use local SVG logos. [Logo provenance and license](docs/coin-logo-sources.md) records the pinned source; no image CDN is needed at runtime.
+All 27 coins use local SVG logos. Quote updates retain the same row/image nodes; failed image URLs stay as readable ticker fallbacks for the rest of that visit instead of being retried on every quote. The full `assets/coins/` folder must be deployed with the application. [Logo provenance and license](docs/coin-logo-sources.md) records the pinned source; no image CDN is needed at runtime.

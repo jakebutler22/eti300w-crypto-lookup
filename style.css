@@ -111,6 +111,7 @@ h2 { font-size: 24px; line-height: 1.25; font-weight: 600; letter-spacing: -.65p
 .asset-symbol-mark[data-symbol="XRP"] { background: #23292f; color: #fff; font-size: 23px; }
 .asset-symbol-mark[data-symbol="DOGE"] { background: #b59c45; color: #fff; font-size: 25px; }
 .asset-symbol-mark[data-symbol="XMR"] { background: #f26822; color: #fff; font-size: 20px; }
+.asset-symbol-mark.logo-fallback { font-size: 10px; letter-spacing: 0; line-height: 1; }
 .table-price, .table-volume { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .table-note { display: block; margin-top: 3px; font-size: 12px; color: var(--muted); font-weight: 400; line-height: 1.35; }
 .table-action { text-align: right; }

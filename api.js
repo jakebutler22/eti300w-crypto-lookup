@@ -1,5 +1,5 @@
-import { APP_CONFIG } from "./config.js?v=20261118-full";
-import { DEMO_ASSETS } from "./data/demo-assets.js?v=20261118-full";
+import { APP_CONFIG } from "./config.js?v=20261118-logos";
+import { DEMO_ASSETS } from "./data/demo-assets.js?v=20261118-logos";
 
 export class ApiError extends Error {
   constructor(code, message, { status, cause, retryAfterMs, responseBody } = {}) {

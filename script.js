@@ -1,7 +1,7 @@
-import { APP_CONFIG } from './config.js?v=20261118-full';
-import { formatUsdPrice, formatVolume, classifyFreshness, appendPriceObservation, priceChartGeometry } from './data-state.js?v=20261118-full';
-import { ApiError, getAssetDirectory, loadMarketDirectory, lookupAsset } from './api.js?v=20261118-full';
-import { DEMO_ASSETS, TEAM_ASSETS } from './data/demo-assets.js?v=20261118-full';
+import { APP_CONFIG } from './config.js?v=20261118-logos';
+import { formatUsdPrice, formatVolume, classifyFreshness, appendPriceObservation, priceChartGeometry } from './data-state.js?v=20261118-logos';
+import { ApiError, getAssetDirectory, loadMarketDirectory, lookupAsset } from './api.js?v=20261118-logos';
+import { DEMO_ASSETS, TEAM_ASSETS } from './data/demo-assets.js?v=20261118-logos';
 
 const $ = (id) => document.getElementById(id);
 const isDemo = APP_CONFIG.mode === 'demo';
@@ -23,6 +23,8 @@ const marketCache = new Map();
 const priceHistories = new Map();
 const responseReceipts = new WeakMap();
 const rowFailures = new Map();
+const directoryRows = new Map();
+const failedLogos = new Set();
 if (isDemo) DEMO_ASSETS.forEach((data) => marketCache.set(data.symbol, { data, mode: 'demo', marketStatus: 'available' }));
 const form = $('search-form');
 const input = $('asset-search');
@@ -146,8 +148,14 @@ function renderPriceChart(response) {
 }
 
 function setSymbolMark(element, symbol) {
+  if (element.dataset.symbol === symbol && element.firstChild) return;
   element.dataset.symbol = symbol;
   element.replaceChildren();
+  element.classList.toggle('logo-fallback', failedLogos.has(symbol));
+  if (failedLogos.has(symbol)) {
+    element.textContent = symbol;
+    return;
+  }
   const image = document.createElement('img');
   image.src = `./assets/coins/${symbol.toLowerCase()}.svg`;
   image.alt = '';
@@ -155,7 +163,10 @@ function setSymbolMark(element, symbol) {
   image.height = 40;
   image.decoding = 'async';
   image.addEventListener('error', () => {
-    // The coin name remains beside the decorative logo if an asset cannot load.
+    // An older request must not replace a newer selected asset's logo.
+    if (element.dataset.symbol !== symbol || image.parentNode !== element) return;
+    failedLogos.add(symbol);
+    element.classList.add('logo-fallback');
     element.textContent = symbol;
   }, { once: true });
   element.append(image);
@@ -199,7 +210,7 @@ function directoryFocus() {
 }
 
 function restoreDirectoryFocus(previous) {
-  if (!previous) return;
+  if (!previous || list.contains(document.activeElement)) return;
   const rows = [...list.querySelectorAll('tr[data-symbol]')];
   const row = rows.find((item) => item.dataset.symbol === previous.symbol) || rows[Math.min(previous.index, rows.length - 1)];
   const selector = previous.kind === 'watch' ? '.watch-button' : previous.kind === 'quote' ? '.row-quote-button' : '.asset-row';
@@ -224,6 +235,52 @@ function tableNote(text) {
   return note;
 }
 
+function createDirectoryRow(asset) {
+  const item = document.createElement('tr');
+  item.className = 'market-row';
+  item.dataset.symbol = asset.symbol;
+  const watchCell = document.createElement('td');
+  watchCell.className = 'table-watch';
+  const watchButton = document.createElement('button');
+  watchButton.type = 'button';
+  watchButton.className = 'watch-button';
+  watchButton.dataset.watchSymbol = asset.symbol;
+  watchCell.append(watchButton);
+  const assetCell = document.createElement('td');
+  assetCell.className = 'table-asset';
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'asset-row';
+  button.dataset.asset = asset.symbol;
+  const mark = document.createElement('span');
+  mark.className = 'asset-symbol-mark';
+  mark.setAttribute('aria-hidden', 'true');
+  setSymbolMark(mark, asset.symbol);
+  const label = document.createElement('span');
+  label.className = 'asset-row-label';
+  const name = document.createElement('span');
+  name.className = 'asset-row-name';
+  const symbol = document.createElement('span');
+  symbol.className = 'asset-row-symbol';
+  symbol.textContent = asset.symbol;
+  label.append(name, symbol);
+  button.append(mark, label);
+  assetCell.append(button);
+  const priceCell = document.createElement('td');
+  priceCell.className = 'table-price';
+  const volumeCell = document.createElement('td');
+  volumeCell.className = 'table-volume';
+  const actionCell = document.createElement('td');
+  actionCell.className = 'table-action';
+  const action = document.createElement('button');
+  action.type = 'button';
+  action.className = 'row-quote-button';
+  action.dataset.asset = asset.symbol;
+  actionCell.append(action);
+  item.append(watchCell, assetCell, priceCell, volumeCell, actionCell);
+  return { item, watchButton, button, name, mark, priceCell, volumeCell, action };
+}
+
 function renderDirectory(query = '') {
   const previousFocus = directoryFocus();
   const term = query.trim().replace(/\s+/g, ' ').toLowerCase();
@@ -234,52 +291,27 @@ function renderDirectory(query = '') {
     const direction = state.sort === 'name-desc' ? -1 : 1;
     matches.sort((a, b) => direction * (a.name.localeCompare(b.name, 'en', { sensitivity: 'base' }) || a.symbol.localeCompare(b.symbol)));
   }
-  list.replaceChildren();
-  for (const asset of matches) {
-    const item = document.createElement('tr');
-    item.className = 'market-row';
-    item.dataset.symbol = asset.symbol;
+  const visibleSymbols = new Set(matches.map((asset) => asset.symbol));
+  for (const row of [...list.children]) {
+    if (!visibleSymbols.has(row.dataset.symbol)) row.remove();
+  }
+  for (const [index, asset] of matches.entries()) {
+    if (!directoryRows.has(asset.symbol)) directoryRows.set(asset.symbol, createDirectoryRow(asset));
+    const { item, watchButton, button, name, priceCell, volumeCell, action } = directoryRows.get(asset.symbol);
     item.dataset.selected = String(asset.symbol === state.selectedSymbol);
-    const watchCell = document.createElement('td');
-    watchCell.className = 'table-watch';
-    const watchButton = document.createElement('button');
-    watchButton.type = 'button';
-    watchButton.className = 'watch-button';
-    watchButton.dataset.watchSymbol = asset.symbol;
     const watched = watchlist.has(asset.symbol);
     watchButton.textContent = watched ? '★' : '☆';
     watchButton.setAttribute('aria-pressed', String(watched));
     watchButton.title = `${watched ? 'Remove' : 'Add'} ${asset.name} ${watched ? 'from' : 'to'} watchlist`;
     watchButton.setAttribute('aria-label', watchButton.title);
-    watchCell.append(watchButton);
-    const assetCell = document.createElement('td');
-    assetCell.className = 'table-asset';
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'asset-row';
-    button.dataset.asset = asset.symbol;
     button.setAttribute('aria-pressed', String(asset.symbol === state.selectedSymbol));
     button.setAttribute('aria-label', `Look up ${asset.name} (${asset.symbol})`);
     button.disabled = !usesNolanApi && state.rateLimitedUntil > Date.now();
-    const mark = document.createElement('span');
-    mark.className = 'asset-symbol-mark';
-    mark.setAttribute('aria-hidden', 'true');
-    setSymbolMark(mark, asset.symbol);
-    const label = document.createElement('span');
-    label.className = 'asset-row-label';
-    const name = document.createElement('span');
-    name.className = 'asset-row-name';
     name.textContent = asset.name;
-    const symbol = document.createElement('span');
-    symbol.className = 'asset-row-symbol';
-    symbol.textContent = asset.symbol;
-    label.append(name, symbol);
-    button.append(mark, label);
-    assetCell.append(button);
-    const priceCell = document.createElement('td');
-    priceCell.className = 'table-price';
-    const volumeCell = document.createElement('td');
-    volumeCell.className = 'table-volume';
+    priceCell.replaceChildren();
+    volumeCell.replaceChildren();
+    priceCell.removeAttribute('title');
+    volumeCell.removeAttribute('title');
     const cached = marketCache.get(asset.symbol);
     const failure = rowFailures.get(asset.symbol);
     if (usesNolanApi && !state.directoryLoaded) {
@@ -304,18 +336,12 @@ function renderDirectory(query = '') {
       volumeCell.append('—', tableNote(failure ? 'Unavailable' : 'Loading…'));
       if (failure) priceCell.title = failure.message || 'The API did not return a usable quote.';
     }
-    const actionCell = document.createElement('td');
-    actionCell.className = 'table-action';
-    const action = document.createElement('button');
-    action.type = 'button';
-    action.className = 'row-quote-button';
-    action.dataset.asset = asset.symbol;
     action.textContent = usesNolanApi && asset.backendAvailable === false ? 'Status' : 'Details';
     action.setAttribute('aria-label', `${usesNolanApi && asset.backendAvailable === false ? 'View API support status for' : 'View details for'} ${asset.name}`);
     action.disabled = !usesNolanApi && state.rateLimitedUntil > Date.now();
-    actionCell.append(action);
-    item.append(watchCell, assetCell, priceCell, volumeCell, actionCell);
-    list.append(item);
+    // Keep existing rows/images attached while only their quotes change.
+    const current = list.children[index] || null;
+    if (current !== item) list.insertBefore(item, current);
   }
   $('asset-count').textContent = String(matches.length);
   $('summary-asset-count').textContent = String(directory.length);

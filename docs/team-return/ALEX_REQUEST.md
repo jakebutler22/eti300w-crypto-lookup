@@ -43,3 +43,7 @@ After the approved release, return public URL, deployed release hash/test time a
 ## Latest website check
 
 On November 18, the hosted core frontend matched the all-coin release and all 27 live routes worked through the adapter. The public `assets/coins/btc.svg` and `assets/coins/fil.svg` paths returned 404. Include the entire `assets/coins/` folder (27 SVGs plus license) from the 36-file archive when reviewing the next deployment; preserve the nested paths. The newer local-file recovery view is included in this updated archive.
+
+## Logo flashing release
+
+A subsequent read-only audit found all 27 hosted SVG paths returning 404. Quote callbacks were recreating image nodes and retrying the missing paths; the updated frontend preserves nodes and uses stable, readable failure fallbacks. Deploy the complete reviewed 36-file API payload, including `assets/coins/`, after the normal backup/review. Verify all 27 SVG routes return 200 with SVG content and that images do not reload during quote refresh. Runtime import/style version: `20261118-logos`.

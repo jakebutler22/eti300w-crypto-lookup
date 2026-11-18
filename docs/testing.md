@@ -1,5 +1,13 @@
 # Verification record
 
+## Logo flashing fix · November 18, 2026
+
+The deployed core files matched the preceding release, but all 27 `/assets/coins/<symbol>.svg` requests returned HTTP 404 HTML. The existing renderer recreated every table image as each market quote arrived, repeatedly retrying the missing files. Oversized ticker fallbacks also clipped inside the icon circles.
+
+The renderer now retains each asset row and logo node across quote/freshness updates, sorting and filters. Same-asset detail refreshes preserve their logo; failed URLs use a readable ticker fallback for the visit. An old image error cannot replace a newer selected asset's logo. Release query versions changed to `20261118-logos`.
+
+`npm test`: **122/122 passed**, including seven new checks exercising actual production rendering functions with a minimal DOM. They cover row/image identity, keyboard focus, sort/filter reuse, updated metadata/support state, missing-image retries and delayed error races. Actual Safari tested an isolated missing-logo preview using the live API: 54 successful market responses over initial load plus automatic refresh produced exactly 27 image requests, one per coin, with readable steady fallbacks. A second Safari preview served the complete assets: all 27 SVGs returned 200, and another 54 market responses plus selection of Ethereum produced no repeated logo requests (27 total SVG requests). The correct logos and cached Ethereum overview remained visible. These controlled previews did not change production. No AWS files or services were changed. The complete 36-file API archive includes all 27 SVGs and their license; the missing hosted folder still requires deployment.
+
 ## Direct-file loading diagnosis · November 18, 2026
 
 Opening `index.html` with a `file://` address prevents the module-based app from loading and supplies no same-origin `/api` server. The file now has an inline, import-free recovery view linking to the real website and explaining `npm run serve`. It hides the unusable controls and indefinite loading state only for the file protocol; HTTP behavior is unchanged.
