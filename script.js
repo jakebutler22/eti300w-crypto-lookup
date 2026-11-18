@@ -1,7 +1,7 @@
-import { APP_CONFIG } from './config.js?v=20261118-27';
-import { formatUsdPrice, formatVolume, classifyFreshness, appendPriceObservation, priceChartGeometry } from './data-state.js?v=20261118-27';
-import { ApiError, getAssetDirectory, loadAssetDirectory, lookupAsset } from './api.js?v=20261118-27';
-import { DEMO_ASSETS, TEAM_ASSETS } from './data/demo-assets.js?v=20261118-27';
+import { APP_CONFIG } from './config.js?v=20261118-context';
+import { formatUsdPrice, formatVolume, classifyFreshness, appendPriceObservation, priceChartGeometry } from './data-state.js?v=20261118-context';
+import { ApiError, getAssetDirectory, loadAssetDirectory, lookupAsset } from './api.js?v=20261118-context';
+import { DEMO_ASSETS, TEAM_ASSETS } from './data/demo-assets.js?v=20261118-context';
 
 const $ = (id) => document.getElementById(id);
 const isDemo = APP_CONFIG.mode === 'demo';
@@ -68,17 +68,13 @@ function updateRefreshControl() {
   $('search-form').querySelector('[type="submit"]').disabled = remaining > 0;
   $('error-action').disabled = remaining > 0;
   list.querySelectorAll('button[data-asset]').forEach((button) => { button.disabled = remaining > 0; });
-  const secondsUntilRefresh = Math.max(0, Math.ceil((state.nextRefreshAt - now) / 1000));
   const refreshMessage = remaining > 0
     ? `The API asked us to wait. Try again in ${Math.ceil(remaining / 1000)} seconds.`
-    : state.loading ? isDemo ? 'Loading the fixed sample…' : 'Requesting a price snapshot…'
-      : !state.autoRefreshQuery ? 'Select an asset to resume automatic refresh.'
-        : document.hidden ? 'Automatic refresh pauses while this tab is hidden.'
-          : Number.isFinite(secondsUntilRefresh)
-            ? `${isDemo ? 'Fixed sample reloads' : 'Selected asset refreshes'} in ${secondsUntilRefresh} seconds. Every 30 seconds while this tab is visible.`
-            : 'Automatic refresh starts after the current lookup.';
+    : '';
   $('refresh-status').textContent = refreshMessage;
   $('error-refresh-status').textContent = refreshMessage;
+  $('refresh-status').hidden = remaining <= 0;
+  $('error-refresh-status').hidden = remaining <= 0;
 }
 
 function applyRateLimit(error) {
@@ -121,7 +117,7 @@ function renderPriceChart(response) {
   svg.toggleAttribute('hidden', geometry.count === 0);
   svg.setAttribute('aria-label', `${data.name} USD price observations received during this visit. ${data.simulated ? 'Fixed simulated sample.' : 'Receipt times do not establish provider freshness.'}`);
   $('chart-empty').hidden = geometry.count > 0;
-  $('chart-empty').textContent = 'A chart appears after the first successful price response. No earlier market history is available.';
+  $('chart-empty').textContent = 'No price observations yet.';
   $('chart-line').setAttribute('d', geometry.linePath);
   $('chart-area').setAttribute('d', geometry.areaPath);
   const point = $('chart-point');
@@ -136,9 +132,9 @@ function renderPriceChart(response) {
   $('chart-end').textContent = geometry.end === null ? '—' : `${chartTime.format(new Date(geometry.end))} UTC`;
   const count = geometry.count;
   $('chart-status').textContent = !available
-    ? count ? `Latest quote unavailable. Showing ${count} earlier successful ${count === 1 ? 'observation' : 'observations'} from this visit.` : 'Waiting for a usable market quote.'
-    : data.simulated ? `${count} sample ${count === 1 ? 'observation' : 'observations'} this visit. Each reload repeats the same fixed value; this is not market history.`
-      : `${count} successful ${count === 1 ? 'quote' : 'quotes'} received this visit. Times show browser receipt, not provider trade time.${count === 1 ? ' The next successful refresh will add a second point.' : ''}`;
+    ? count ? `Latest quote unavailable · ${count} earlier ${count === 1 ? 'quote' : 'quotes'}` : 'Market quote unavailable'
+    : data.simulated ? `${count} sample ${count === 1 ? 'observation' : 'observations'} · Fixed values`
+      : `${count} ${count === 1 ? 'quote' : 'quotes'} · Times received in UTC`;
 }
 
 function setSymbolMark(element, symbol) {
@@ -422,11 +418,12 @@ function renderAsset(response, { announceResult = true } = {}) {
   renderFreshness();
   renderPriceChart(response);
   $('profile-source-copy').textContent = simulated && mode === 'demo'
-    ? 'This demo includes sample profiles. In API mode, profiles come from the MariaDB-compatible database through Flask.'
-    : response.contract === 'nolan-v1' ? 'Database profiles retrieved through Flask. Category and description appear only when the database API supplies them.' : `Source: ${data.sources.profile}. Retrieved through the Python API.`;
+    ? 'Sample asset profiles.'
+    : response.contract === 'nolan-v1' ? 'Asset profiles are returned by the database API.' : `Asset profile source: ${data.sources.profile}.`;
   $('market-source-copy').textContent = simulated && mode === 'demo'
-    ? 'The demo uses fixed sample figures. The planned market data source is Coinbase Exchange, accessed through the Python API.'
-    : !marketAvailable ? 'The market request failed. No stored or sample price has replaced the missing quote.' : `Source: ${data.sources.market || 'Not provided by the API'}. ${simulated ? 'This response contains simulated data.' : 'The selected asset refreshes every 30 seconds while this tab is visible.'}`;
+    ? 'Fixed sample quotes.'
+    : !marketAvailable ? 'Market quote unavailable.' : simulated ? 'Simulated quotes.'
+      : data.sources.market === 'Coinbase Exchange' ? 'Quotes come from Coinbase Exchange.' : `Quote source: ${data.sources.market || 'Not provided by the API'}.`;
   $('profile-source-tag').textContent = mode === 'demo' ? 'Sample data' : response.contract === 'nolan-v1' ? 'Database' : 'Via API';
   $('market-source-tag').textContent = !marketAvailable ? 'Unavailable' : simulated ? 'Simulated' : 'Via API';
   if (!isDemo) {
@@ -709,8 +706,8 @@ if (!isDemo) {
   $('directory-title').textContent = 'Crypto market prices';
   $('directory-empty-message').textContent = usesNolanApi ? 'No matching assets in the database catalog.' : 'Use the search field to look up an asset.';
   $('directory-caption').textContent = usesNolanApi ? 'Loading database profiles…' : 'Search using the configured API.';
-  $('profile-source-copy').textContent = 'Profile sources will be shown after the middleware returns a validated asset response.';
-  $('market-source-copy').textContent = 'Market source details appear after a successful lookup. The selected asset refreshes every 30 seconds while this tab is visible.';
+  $('profile-source-copy').textContent = 'Asset profiles are returned by the database API.';
+  $('market-source-copy').textContent = 'Quotes come from Coinbase Exchange.';
   $('profile-source-tag').textContent = 'Awaiting response';
   $('market-source-tag').textContent = 'Awaiting response';
   renderApiExamples([]);

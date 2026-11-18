@@ -42,7 +42,7 @@ Deploy only the reviewed runtime payload after Jake approves the exact plan.
 Do not copy the whole team package, demo, replies, report, screenshots or manifests
 into the public web root. Do not run cleanup/deployment commands from old handoffs.
 The API package is the current-route baseline. The new backend candidate adds
-metadata/combined routes. Jake is finalizing the optional metadata mapping/tests
+metadata/combined routes. Jake has implemented and tested optional metadata mapping
 for the now-observed fields; the combined JSON contract and hosted comparison
 still require review before claiming full integration.
 

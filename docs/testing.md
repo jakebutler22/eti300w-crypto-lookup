@@ -10,6 +10,8 @@
 - Earlier narrow reflow/watchlist/search checks remain recorded below. A dedicated touch-device check, hidden-tab network instrumentation and controlled delayed-response browser race checks were not newly completed; source review checked the visibility/in-flight/cancellation safeguards.
 - Runtime import/style URLs carry a release version to avoid stale browser modules after an update. The tall desktop overview scrolls independently so Specifications remains reachable.
 
+The final copy cleanup was reloaded in actual Safari: Crypto Context title, navigation in document order, retained 27-asset count and FAQs were visible; removed API/summary/promotional text was absent.
+
 No AWS writes, migration, service restart or frontend upload was performed. Earlier records below retain their original dates and scope.
 
 ## Earlier verification history

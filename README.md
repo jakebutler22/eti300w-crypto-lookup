@@ -1,6 +1,8 @@
-# Crypto Lookup
+# Crypto Context
 
 A cryptocurrency explorer with a searchable 27-asset catalog, a browser-local watchlist, automatic quote refresh and session price charts. Built with HTML, CSS and vanilla JavaScript; no frontend build or API key is required.
+
+The page title is Crypto Context. Navigation follows the section order: Explore, Data sources, Learn. Secondary taglines, source badges and routine status bars have been removed.
 
 The interface takes visual inspiration from [Coinbase Explore](https://www.coinbase.com/explore), using its own branding and implementation. Course/project footnotes have been removed from the visitor interface. Data sources and sample labels remain visible.
 

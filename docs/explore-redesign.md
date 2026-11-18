@@ -32,3 +32,7 @@ No remote service or AWS resource was modified by this assistant. The earlier te
 Removed course/classroom branding from visitor-facing HTML. JSON is now inside the Specifications disclosure, preserving the original modal and endpoint links. Monero is not selectable; its raw database record, if returned, remains intact in JSON. The exact 27 requested symbols/names/categories are in `TEAM_ASSETS`. Nolan and Alex still need to extend the deployed database/backend before all 27 can return API quotes. No remote migration was performed.
 
 All 27 public market routes returned HTTP 200 during the latest read-only check, and the catalog now supplies names/categories/descriptions. See `evidence/api-2026-11-18-catalog-verification.json`. Optional new metadata is integrated; the new combined-route schema remains separate work.
+
+## Final copy cleanup
+
+Renamed the page Crypto Context and FAQ heading FAQs. Navigation now follows document order: Explore → Data sources → Learn. Removed the refresh summary strip, API status banner, source tags, directory caption and promotional section taglines; retained the asset count and essential quote/sample/freshness information. Normal refresh countdowns are hidden while rate-limit guidance remains visible.
