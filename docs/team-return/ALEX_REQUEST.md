@@ -39,3 +39,7 @@ After specific approval, preserve the existing root's unrelated `api.html`, defa
 Do not use the earlier delete-first rollback. Validate the backup and restoration in a separate location before replacing live files; restore the approved file set or existing release pointer without first deleting the entire root. No remote backup/staging/upload should occur before approval.
 
 After the approved release, return public URL, deployed release hash/test time and acceptance results for the new interface, 27-target directory, current supported versus Awaiting backend support states, BTC/Bitcoin, ETH/Ethereum, JSON under Specifications, selected-asset 30-second refresh and session chart. XMR must stay excluded from selections while original raw JSON remains intact. Verify every target name/ticker against the current 27-row response and explicit provider availability; missing market values must not use stored samples. Jake will perform the final frontend/keyboard/responsive checks and assemble the report.
+
+## Latest website check
+
+On November 18, the hosted core frontend matched the all-coin release and all 27 live routes worked through the adapter. The public `assets/coins/btc.svg` and `assets/coins/fil.svg` paths returned 404. Include the entire `assets/coins/` folder (27 SVGs plus license) from the 36-file archive when reviewing the next deployment; preserve the nested paths. The newer local-file recovery view is included in this updated archive.

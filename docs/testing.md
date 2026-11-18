@@ -1,5 +1,11 @@
 # Verification record
 
+## Direct-file loading diagnosis · November 18, 2026
+
+Opening `index.html` with a `file://` address prevents the module-based app from loading and supplies no same-origin `/api` server. The file now has an inline, import-free recovery view linking to the real website and explaining `npm run serve`. It hides the unusable controls and indefinite loading state only for the file protocol; HTTP behavior is unchanged.
+
+A read-only check on November 18 found the hosted core HTML/CSS/modules byte-identical to the preceding all-coin release. The catalog returned 27 complete profiles and `loadMarketDirectory` returned all 27 market responses without errors in 6.7 seconds. Public BTC/FIL logo requests returned 404: the core deployment is current, but its `assets/coins/` folder still needs to be copied from the full 36-file API archive. This recovery-view change is a subsequent release and has not been deployed here. Actual Safari confirmed that the local file now shows only the recovery view. Its live-site link initially hit an old cached “Crypto Asset Data” document; Reload Page From Origin (Option–Command–R) loaded the deployed Explore interface with a real BTC price, 24-hour volume and asset overview. The live API and frontend required no remote changes. All 115 automated checks passed after the recovery-view change.
+
 ## All-coin loading and local logos · November 18, 2026
 
 - `npm test`: **115/115 passed**. The 17 bulk-loader tests cover one catalog request, all-coin delivery, bounded concurrency/pacing, partial failures, per-request timeouts, cancellation and rate-limit stops. Two logo checks verify unique self-contained local SVGs for the exact 27-coin catalog, with license and pinned provenance.

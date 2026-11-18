@@ -31,6 +31,8 @@ npm run serve
 
 Open [localhost:8000](http://127.0.0.1:8000). Stop with Ctrl+C. JavaScript modules require HTTP; opening `index.html` directly is unsupported.
 
+If prices, volume and the asset overview are all blank, check the address first. A `file:///…/index.html` address bypasses the web server and blocks module loading; the file now shows a recovery link instead of an endless loading state. Use the [live website](http://3.145.42.74/) or the local server above. A plain static server does not supply the `/api` proxy. If Safari still shows an older page after a deployment, press Option–Command–R to reload from the origin.
+
 `config.js` defaults to **api**. The local preview serves the allowlisted runtime files and forwards only GET catalog/market routes to the observed public API. `npm run serve:demo` is an explicit offline fixture preview; it keeps truthful fixture labels. API mode uses the same-origin `/api/db/cryptos` and `/api/live/<symbol>` routes through the existing web-tier proxy. A static local server alone does not provide those API routes. Credentials and private endpoints do not belong in frontend configuration.
 
 ```sh
