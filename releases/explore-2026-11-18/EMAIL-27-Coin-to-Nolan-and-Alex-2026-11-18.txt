@@ -4,7 +4,9 @@ Hey Nolan and Alex,
 
 The attached ZIP has the updated frontend, local demo, unchanged backend candidate, current status and reply templates. I already have your infrastructure packet, middleware write-up and backend upgrade files; no need to resend them.
 
-The frontend now has the Explore layout, watchlist/sorting, all 27 requested coins with local logos, JSON under Specifications, automatic market prices/volume for every supported coin on load and 30 seconds after each batch, and session price charts. Monero is removed from the website. The 115 automated frontend checks pass locally; this includes validation of the new timestamps, volume units and USD product metadata. The latest changes still need hosted verification; earlier Safari checks against our real API do not establish cloud deployment of this release.
+The frontend now has the Explore layout, watchlist/sorting, all 27 requested coins with local logos, JSON under Specifications, automatic market prices/volume for every supported coin on load and 30 seconds after each batch, and session price charts. Monero is removed from the website. The 122 automated frontend checks pass locally; this includes validation of the new timestamps, volume units and USD product metadata. The latest changes still need hosted verification; earlier Safari checks against our real API do not establish cloud deployment of this release.
+
+The latest logo check found all 27 hosted SVG URLs returning 404. Please deploy the entire 01-web-release-API folder, including assets/coins/ and its license, instead of only the top-level files. This update also preserves image nodes during quote refresh and fixes clipped/repeated failure fallbacks.
 
 The public API was rechecked at 22:10 UTC: /api/db/cryptos now returns all 27 requested coins with categories/descriptions, and BTC, SHIB and POL market requests succeed with product, timestamp and volume-unit fields. Those gaps have progressed; we don't need another 27-coin implementation request. This does not establish the exact deployed source version or complete every route/test.
 
