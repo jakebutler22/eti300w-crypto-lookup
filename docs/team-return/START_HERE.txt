@@ -52,7 +52,7 @@ was not executed or verified deployed during this packaging review. Its migratio
 and instructions are proposals. Approval must precede all remote writes, including
 backups, staging, uploads, schema changes, installs and restarts. The included
 .env.example contains placeholders only; never return a real environment file.
-The 96 frontend tests do not establish candidate backend or database readiness.
+The 115 frontend tests do not establish candidate backend or database readiness.
 
 RETURN
 Fill RETURN_TO_JAKE/NOLAN_REPLY.md or ALEX_REPLY.md. Return only your filled reply,

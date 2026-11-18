@@ -1,9 +1,9 @@
 # Candidate frontend release - review before deployment
 
-This is the Explore redesign API release built November 18, 2026 at 22:26:55 UTC. It retains the current-route API contract. It has not been verified deployed. Latest public checks begun at 22:10:18 UTC now return the 27-target catalog with category/description and BTC/SHIB/POL market metadata. The frontend validates and maps the optional fields; the separate combined JSON contract still requires explicit integration. Unknown fields remain unknown when absent. The received backend candidate is not proof of the current deployed source version.
+This is the Explore redesign API release built November 18, 2026 at 22:38:23 UTC. It retains the current-route API contract. It has not been verified deployed. Latest public checks begun at 22:10:18 UTC now return the 27-target catalog with category/description and BTC/SHIB/POL market metadata. The frontend validates and maps the optional fields; the separate combined JSON contract still requires explicit integration. Unknown fields remain unknown when absent. The received backend candidate is not proof of the current deployed source version.
 
 API archive SHA-256:
-`e03f3f0f5f783a38d5ba167cfde6590ae8ecf0ea1a239c1db5d453d9f72e9348`
+`fc35c9199f7399b899e8e900ff2622a8127f184a8efbc75db216094ce5fbe341`
 
 `release/eti300w-frontend-api.manifest.json` records every runtime file hash. `01-web-release-API/` is extracted from that archive without changing its bytes.
 

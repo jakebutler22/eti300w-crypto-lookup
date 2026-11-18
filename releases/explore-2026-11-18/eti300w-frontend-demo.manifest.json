@@ -1,32 +1,32 @@
 {
   "schemaVersion": 1,
-  "builtUTC": "2026-11-18T22:26:55Z",
+  "builtUTC": "2026-11-18T22:38:23Z",
   "mode": "demo",
   "archive": {
     "name": "eti300w-frontend-demo.tar.gz",
-    "sha256": "d85e3aefb3c8f7fbb2861be626ee30c1f641a8d276c2d4dc9b6e3e114e410af4",
-    "bytes": 31824
+    "sha256": "7ce3d45eb7cde97131d6bf9a8189228b4c4cefe700b8183b82d179cbbebaf6d8",
+    "bytes": 59041
   },
   "files": [
     {
       "path": "index.html",
-      "sha256": "cee85f4cec21fc041908753e544fca31ce3560e1b93a4acdf327cf6374e4e643",
-      "bytes": 14883
+      "sha256": "a74e12c10b49d3ae199fd3029ac5a9c1fd5cbaa338d3efe5afda924281a7ddf6",
+      "bytes": 15082
     },
     {
       "path": "style.css",
-      "sha256": "46737761b41953159df360cbcce40f9c663b6b1441afbcd91c8a8878a1db6424",
-      "bytes": 29345
+      "sha256": "9aceca4d8e134b4ae49ced8c2ec0262e013f8b6ab8189f4ad6b827e898109552",
+      "bytes": 29604
     },
     {
       "path": "script.js",
-      "sha256": "55dd38d0d714c297c3f8c57eb194ac5eaa7ba7923e534ba7ffb3a26ec55a2895",
-      "bytes": 38966
+      "sha256": "07357635c4961e52f7a0539efb5f862fe3063569159141788656ce0e14954f35",
+      "bytes": 47069
     },
     {
       "path": "api.js",
-      "sha256": "4d0ba83c7036788a249970bc5500e2fabe911df00b7d46b812c091948291e147",
-      "bytes": 21032
+      "sha256": "6292aadbf036e66a4fa15525027b9dc68ce94935b162b4aca7ff554ab6299766",
+      "bytes": 27740
     },
     {
       "path": "config.js",
@@ -47,6 +47,146 @@
       "path": "favicon.svg",
       "sha256": "2775259f8210a9e93bc5051db007af93126e32d48d184262bbdb84b921b56e04",
       "bytes": 218
+    },
+    {
+      "path": "assets/coins/btc.svg",
+      "sha256": "6d8b1445208440cf1c9284c4ddb4912422a645c25adc91964e7efb6fecd0e00e",
+      "bytes": 1029
+    },
+    {
+      "path": "assets/coins/eth.svg",
+      "sha256": "c442895c44717422002af95eb09cd7b1482a1163dbd2cd1101b9426de9dabd24",
+      "bytes": 1067
+    },
+    {
+      "path": "assets/coins/xrp.svg",
+      "sha256": "83cf9910ceb73ad23979f20b2442a3e4f81c75f9e6f1b56e46d6252dc8cfd670",
+      "bytes": 479
+    },
+    {
+      "path": "assets/coins/ltc.svg",
+      "sha256": "86d158dc63f4dfd469d1dea74de4e92670b44660e719a52cec8488d296d05696",
+      "bytes": 482
+    },
+    {
+      "path": "assets/coins/ada.svg",
+      "sha256": "b5efde8a9aa33d947d40e2f509efbcf0739e33c720638a5319e23f4cb3652f96",
+      "bytes": 3503
+    },
+    {
+      "path": "assets/coins/doge.svg",
+      "sha256": "8e580724bcc4b97955867941db53f55ab6dac62b9c68a10031269d67a2a3d721",
+      "bytes": 25683
+    },
+    {
+      "path": "assets/coins/sol.svg",
+      "sha256": "8e86321ce83c059fa17f002685e6046fc6f1b69defa3e8eacd7af55580ffcf22",
+      "bytes": 985
+    },
+    {
+      "path": "assets/coins/bch.svg",
+      "sha256": "bfb88d9610b5c1a1d5a1be7e9a09fbccf12847539a560503a14accbcd4c498de",
+      "bytes": 1031
+    },
+    {
+      "path": "assets/coins/link.svg",
+      "sha256": "ac1324d14556249d925148a76a83a21e6e5747a289e19aa33c675c117cf54b1c",
+      "bytes": 496
+    },
+    {
+      "path": "assets/coins/avax.svg",
+      "sha256": "c9f57cf0ec0d5f2cff744830e3a3e43c0692b34b2983f10516a8deafc79b6584",
+      "bytes": 966
+    },
+    {
+      "path": "assets/coins/dot.svg",
+      "sha256": "db418bf167fc68782e5114b5342bc8ef652f59a795a64e1d9d34aeee8d5b1d37",
+      "bytes": 1109
+    },
+    {
+      "path": "assets/coins/xlm.svg",
+      "sha256": "23758813e05c5a8e92c176e1bb776133e5df50ce5f878ed2888e5c3de3ad3a31",
+      "bytes": 974
+    },
+    {
+      "path": "assets/coins/uni.svg",
+      "sha256": "5ca8907d5eb4ac8a68a2dec8e884db1387bccabb545a8a362a2f70854809fce4",
+      "bytes": 5129
+    },
+    {
+      "path": "assets/coins/atom.svg",
+      "sha256": "d85f7d795098d80ae08d2fede4c50c611df667716aaeb599b48004c38e733a61",
+      "bytes": 3825
+    },
+    {
+      "path": "assets/coins/shib.svg",
+      "sha256": "520f2f8b5434dc1c8932cf377c3514b6953bb02aa5d141305c639d639c9b89ec",
+      "bytes": 3583
+    },
+    {
+      "path": "assets/coins/pol.svg",
+      "sha256": "77e5e69ad55de61567ec47160e15bf3d978d6386a8e8beab41f673fdcd3d033a",
+      "bytes": 1346
+    },
+    {
+      "path": "assets/coins/etc.svg",
+      "sha256": "730d3733eee595db301348b8cb4f2057f973a91eb585741af24898d28b6dbaca",
+      "bytes": 515
+    },
+    {
+      "path": "assets/coins/hbar.svg",
+      "sha256": "ba827d527088ed5822adf0ff61db3bf1ab5103951fed6dd5a9da14fe01ff4aeb",
+      "bytes": 427
+    },
+    {
+      "path": "assets/coins/near.svg",
+      "sha256": "38e95ea3e510a0e5437d6ba5ca46760f6532c7efbafc09d50f23e8d668cc5da4",
+      "bytes": 795
+    },
+    {
+      "path": "assets/coins/aave.svg",
+      "sha256": "01d0699498be795a9ac50d2d07c836b45cab7f7c7d1fad07fb31588510d94999",
+      "bytes": 730
+    },
+    {
+      "path": "assets/coins/icp.svg",
+      "sha256": "8eca035fce3c8929864b863f67138576b41f4ce2826df6160f68c12fc04cdb53",
+      "bytes": 1366
+    },
+    {
+      "path": "assets/coins/apt.svg",
+      "sha256": "8b1320005ea589061772defb5f05d0b8afedfb31511de56a0bdebb889bd4d9b3",
+      "bytes": 1187
+    },
+    {
+      "path": "assets/coins/arb.svg",
+      "sha256": "f29cfe97747841945400639075492655a09b47725300c9fe118800d55e11f0e6",
+      "bytes": 2181
+    },
+    {
+      "path": "assets/coins/op.svg",
+      "sha256": "4048d7dc9f12e2d4b6d9c2deb29f3e3664bd4f204d158657a828421bdef8ee2b",
+      "bytes": 1197
+    },
+    {
+      "path": "assets/coins/sui.svg",
+      "sha256": "92709536646227b17865cc92af1f208801517f4ece8a1fdff0ee26347f394ff7",
+      "bytes": 1041
+    },
+    {
+      "path": "assets/coins/algo.svg",
+      "sha256": "51d949b574b5b2cf6c3bbc2c70a08b1adc4cd980c9eec422e290e0b4add35ca3",
+      "bytes": 496
+    },
+    {
+      "path": "assets/coins/fil.svg",
+      "sha256": "28c1a9789ca3c393097e8eabd4e2b946efdeee40bc2f681831a13876bc3149e2",
+      "bytes": 1122
+    },
+    {
+      "path": "assets/coins/LICENSE.txt",
+      "sha256": "fcbc59252ec73f93cb16242e7a10157747058b70d561a2cec650d8dc60778263",
+      "bytes": 1062
     }
   ]
 }
