@@ -1,0 +1,50 @@
+ETI 300W — Middleware Implementation
+
+Middleware Overview
+
+For our three-tier cryptocurrency application, my responsibility was developing the Python Flask backend that connects the frontend website to the MariaDB database and Coinbase Exchange API.
+
+The middleware runs on a separate AWS EC2 instance named coinbase-300w-app, located in the Ohio region (us-east-2). It uses Amazon Linux 2023, Python 3.9.25, Flask 3.1.3, and Gunicorn 23.0.
+
+Implementation
+
+I developed the Flask application and its API routes to retrieve cryptocurrency information. The backend supports database records for eight cryptocurrencies: Bitcoin, Ethereum, XRP, Litecoin, Cardano, Dogecoin, Solana, and Monero.
+
+The application uses database.py to connect to MariaDB and execute SQL queries. One of the main functions, get_all_cryptos(), retrieves the cryptocurrency names, symbols, and stored prices from the cryptocurrencies table.
+
+The backend also requests market information from the Coinbase Exchange API for supported cryptocurrencies and returns the resulting information to the frontend in JSON format.
+
+AWS Deployment
+
+Alex deployed my backend code to /opt/crypto-backend on the application EC2 instance. The application runs through the crypto-backend.service systemd service using Gunicorn on port 5000.
+
+The frontend uses Nginx to forward requests beginning with /api/ to the Flask application.
+
+When a user requests cryptocurrency information, Flask can query the MariaDB server through its private network connection on port 3306 or contact Coinbase over HTTPS on port 443.
+
+The database is hosted on a separate EC2 instance named coinbase-300w-db, rather than on the Flask server.
+
+Testing and Verification
+
+On November 18, 2026, our team verified that:
+
+- The Flask backend service was active and running on the application EC2 instance.
+- Gunicorn was listening on port 5000.
+- The deployed backend code matched the original submitted ZIP files.
+- The get_all_cryptos() function successfully connected to the MariaDB database and returned all eight cryptocurrency records.
+- The /api/live/BTC endpoint successfully returned HTTP 200 with Bitcoin market data from Coinbase.
+- The website's /api/test-db endpoint successfully returned HTTP 200 with a database connection success response.
+
+These tests confirm that the middleware is running on AWS and can communicate with both the database tier and the external Coinbase API.
+
+Limitations
+
+The database currently contains stored sample prices rather than real-time market prices. Real-time market information must be requested separately through Coinbase.
+
+Some cryptocurrency markets, including Monero (XMR), are not supported by the configured Coinbase USD market endpoints. The database also does not currently include cryptocurrency categories or descriptions.
+
+My Contribution
+
+My main contribution was developing the Python Flask backend, creating API endpoints for cryptocurrency information, integrating database access, and implementing Coinbase market-data functionality. I also worked on testing the backend and troubleshooting its functionality during development.
+
+The deployed application now supports communication between the frontend, database, and Coinbase API, demonstrating the middleware component of our three-tier AWS architecture.

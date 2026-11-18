@@ -1,0 +1,81 @@
+# Alex: infrastructure handoff for the Cloud Build submission
+
+Everything below was checked on the live servers and AWS on November 18, 2026, unless it says otherwise. Private addresses and the admin IP are left out.
+
+## Verified configuration
+
+| Item | Verified value |
+|---|---|
+| AWS project / Region | `coinbase-300w`, us-east-2 (Ohio), one Availability Zone (us-east-2a) |
+| Web server | `coinbase-300w-web` (`i-07af2a856bd6c5a38`), t3.micro, Amazon Linux 2023, nginx 1.30.6 on port 80, public IP 3.145.42.74 |
+| App server | `coinbase-300w-app` (`i-0bc386fae55104b3b`), t3.micro, Amazon Linux 2023, Flask 3.1.3 under gunicorn 23.0 on port 5000, Python 3.9.25 |
+| Database server | `coinbase-300w-db` (`i-0292ae1a67191521f`), t3.micro, Amazon Linux 2023, MariaDB 10.5.29 on port 3306, **no public IP** |
+| Web document root | `/usr/share/nginx/html`, files owned `root:root`, mode 644 |
+| `/api/` forwarding | `/etc/nginx/default.d/crypto-api.conf`: `location /api/` → `proxy_pass http://<app private IP>:5000`, 120 s read timeout |
+| App folder / service | `/opt/crypto-backend`, systemd service `crypto-backend`, runs as the unprivileged user `crypto`, 2 gunicorn workers, 120 s timeout |
+| DB credentials | `/etc/crypto-backend.env` on the app server (root-only, mode 600). Not in code, Git or screenshots |
+| Database / table | `crypto_db.cryptocurrencies`: `id` INT primary key, `name` VARCHAR(64), `symbol` VARCHAR(10) unique, `price` DOUBLE. 8 rows |
+| Deployed backend vs. original ZIP | **Identical.** SHA-256 of `app.py` (`0d9c7214…`), `database.py` (`92e0f36a…`) and `requirements.txt` (`688da527…`) match on the server and in the ZIP |
+
+Stored prices are **sample values** from the original code (Bitcoin at $30,000). Live prices come only from Coinbase through `/api/live/<symbol>`. Coinbase has no `XMR-USD` market, so Monero is unavailable for live data.
+
+## Screenshots
+
+Run these from the `infra` folder on Alex's laptop. Each command prints one screen of evidence with a capture time. Team members can also run the same server commands through EC2 Instance Connect in the AWS console.
+
+| File (Jake's names) | What to capture |
+|---|---|
+| `05-three-ec2-instances.png` | **AWS console** → EC2 → Instances in Ohio showing all three running, plus `./evidence.sh instances` |
+| `04-database-schema-records.png` | `./evidence.sh db`: MariaDB running, database/table name, `SHOW TABLES`, `DESCRIBE`, all 8 records labeled as stored sample prices, and proof the DB server has no internet access |
+| `06-private-vpc-evidence.png` | `./evidence.sh network` (VPC, subnets, route tables, security-group rules) **and** `./evidence.sh query` (Flask's own `database.py` on the app server reading all 8 rows from the private database) |
+| Web tier config | `./evidence.sh web`: nginx running, document root and ownership, the `/api/` forwarding block, and a working web → app request |
+| Middleware (shared with Nolan) | `./evidence.sh app`: Flask service running on port 5000, deployed code hashes and versions, a live Coinbase request |
+| `07-network-diagram` | `network-diagram.svg` (editable source), `network-diagram.png` and `network-diagram.pdf` (exports) in this folder |
+
+Optional console screenshots for addition II: **VPC → Your VPCs → `coinbase-300w-vpc` → Resource map** shows both subnets, both route tables, the internet gateway and the S3 endpoint in one view. **EC2 → Security Groups → `coinbase-300w-db-sg` → Inbound rules** shows port 3306 allowed only from `coinbase-300w-app-sg`.
+
+## Addition II: VPC and private networking
+
+**What we built.** The three servers run in their own VPC (`coinbase-300w-vpc`) with two subnets. The web and app servers sit in a **public subnet** whose route table sends internet traffic to an internet gateway. The database server sits in a **private subnet** whose route table has no route to the internet at all, only local VPC traffic and an S3 gateway endpoint. The database server has no public IP address.
+
+**How the tiers are restricted.** Each server has its own security group, and every server-to-server rule references another security group rather than an IP range. The database accepts MySQL (port 3306) only from the app server's security group. The app accepts its API port (5000) only from the web server's security group. Only the website (port 80) is open to the internet. The app server keeps a public IP for one reason: Flask has to reach the Coinbase API over HTTPS, and a NAT gateway (about $32 a month) would have doubled the budget.
+
+**Why.** The Milestone 2 plan committed to restricting database connections to the application tier. A database with no public address and no internet route can't be reached from outside, even if a rule were misconfigured. Patches still reach it: the S3 gateway endpoint serves Amazon Linux's package repositories over AWS's network, at no cost.
+
+**How we verified it** (November 18, 2026):
+1. `./evidence.sh query` ran Flask's own `get_all_cryptos()` on `coinbase-300w-app`. It connected to MariaDB at a private-subnet address on port 3306 and returned all 8 rows.
+2. `./evidence.sh db` showed MariaDB listening on 3306 on `coinbase-300w-db`, and a request from the DB server to the Coinbase API timed out, confirming it has no internet path.
+3. `./evidence.sh network` showed the private route table has no internet gateway route, and that 3306 is allowed only from `coinbase-300w-app-sg`.
+4. From the internet, the app's port 5000 is unreachable, while the same API works through the website's `/api/` path.
+
+## Addition VII: Full network diagram
+
+`network-diagram.svg` is the editable source (plain SVG, which opens in any browser, Inkscape, Figma or diagrams.net). PNG and PDF exports sit next to it. It shows the Region, VPC, Availability Zone, both subnets, the three named servers with their software and ports, the internet gateway, the S3 gateway endpoint and the EC2 Instance Connect Endpoint. Every arrow is labeled with its protocol and port.
+
+Visitor traffic (blue), Coinbase market data (green), administrative SSH (orange) and package updates (gray) are drawn separately. A NAT gateway, load balancer and HTTPS/TLS are deliberately absent because they don't exist in our deployment.
+
+## Frontend deployment (waiting on Jake's release)
+
+The new frontend is a static release, so deploying it only touches the web server's document root. The `/api/` gateway lives in `/etc/nginx/default.d/`, outside the document root, so a frontend release can't overwrite it. nginx serves new files immediately, and no restart is needed.
+
+Procedure, once Jake sends the release folder or ZIP:
+1. **Review:** list the exact files and their SHA-256 hashes, and confirm no file uses localhost URLs or hard-coded IPs. All API calls should use relative `/api/...` paths.
+2. **Back up:** on `coinbase-300w-web`, run `sudo tar -czf /root/html-backup-<date>.tgz -C /usr/share/nginx/html .`
+3. **Get approval:** Jake confirms the file list before anything is copied.
+4. **Deploy:** copy the release into `/usr/share/nginx/html` (owner `root`, mode 644). Only the web server is touched.
+5. **Verify:** load http://3.145.42.74/, search BTC/Bitcoin and ETH/Ethereum, open the raw JSON, check XMR shows as unavailable, and record the hashes and time.
+6. **Restore if anything breaks:** `sudo rm -rf /usr/share/nginx/html/* && sudo tar -xzf /root/html-backup-<date>.tgz -C /usr/share/nginx/html`
+
+## Current limitations
+
+- The website is **HTTP only**. There's no domain name or TLS certificate.
+- Everything runs in **one Availability Zone** with one server per tier, so there's no failover. The database has no automated backups, and running `destroy.sh` deletes it permanently.
+- The app server still needs a public IP for outbound Coinbase calls because there's no NAT gateway. Its API port is closed to the internet.
+- Direct SSH from a laptop allows a single admin IP. Other team members use EC2 Instance Connect in the AWS console instead.
+- The database has no `category` or `description` columns yet, and no timestamp for stored prices. Coinbase's `volume` field is 24-hour trading volume in the base currency, for example BTC, not USD.
+- Public IPs change if the servers are stopped and started.
+- Cost is about $1.08 a day, covered by the project's $100 Free plan credits.
+
+## Contribution (Alex): draft, edit before submitting
+
+> I set up and documented the AWS infrastructure: a dedicated VPC with public and private subnets, three Amazon Linux servers (nginx web server, Flask application server, MariaDB database server), security groups that restrict each tier to the one before it, an S3 gateway endpoint so the private database can be patched without internet access, and EC2 Instance Connect so teammates can reach the servers from the AWS console. I loaded the database schema and sample records, deployed Nolan's backend unchanged as a systemd service, tested the private app-to-database path, and produced the network diagram. *[Describe any AI assistance here if the course policy asks for it.]*

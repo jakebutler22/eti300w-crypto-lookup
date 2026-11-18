@@ -1,0 +1,33 @@
+=== Web tier - coinbase-300w-web ===
+Captured 2026-11-18 21:14 UTC
+
+Instance: i-07af2a856bd6c5a38   Zone: us-east-2a
+OS: Amazon Linux 2023.12.20261102
+
+--- nginx service
+nginx: active since Sun 2026-11-08 23:48:04 UTC
+nginx version: nginx/1.30.6
+listening on 0.0.0.0:80
+listening on [::]:80
+
+--- document root /usr/share/nginx/html
+-rw-r--r--. 1 root root 3464 Oct 15 21:50 404.html
+-rw-r--r--. 1 root root 3507 Oct 15 21:50 50x.html
+-rw-r--r--. 1 root root  851 Nov  8 23:48 api.html
+drwxr-xr-x. 2 root root   27 Nov  8 23:45 icons
+-rw-r--r--. 1 root root 1386 Nov  8 23:48 index.html
+-rw-r--r--. 1 root root  368 Oct 15 21:50 nginx-logo.png
+lrwxrwxrwx. 1 root root   14 Oct 15 21:52 poweredby.png -> nginx-logo.png
+-rw-r--r--. 1 root root  516 Nov  8 23:48 style.css
+
+--- /api/ forwarding: /etc/nginx/default.d/crypto-api.conf
+location /api/ {
+    proxy_pass http://<app-tier-private-ip>:5000;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_read_timeout 120s;
+}
+
+--- web -> app test: GET /api/test-db through nginx
+{"status":"Database connection successful"}
+  [HTTP 200]

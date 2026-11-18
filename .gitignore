@@ -1,0 +1,16 @@
+.DS_Store
+node_modules/
+.env
+.env.*
+.artifacts/
+
+# Generated team handoff archives
+/deliverables/
+
+# Permit only the supplied placeholder backend environment example
+!handoff/backend-candidate/.env.example
+
+# Keep unreviewed browser captures private.
+docs/screenshots/*.png
+docs/screenshots/*.jpg
+docs/screenshots/*.jpeg

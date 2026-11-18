@@ -1,0 +1,67 @@
+ETI 300W - EXPLORE REDESIGN TEAM HANDOFF - NOVEMBER 18, 2026
+
+Read TEAM_STATUS.md first, then your request/reply files.
+
+CONTENTS
+  EMAIL.txt                  Copy-ready group email from Jake
+  TEAM_STATUS.md             What is received, tested, and still outstanding
+  NOLAN_REQUEST.md           Remaining API/frontend integration requests
+  ALEX_REQUEST.md            Screenshots and reviewed deployment requests
+  RELEASE_REVIEW.md          Exact frontend candidate and acceptance checklist
+  BACKEND_CANDIDATE_REVIEW.md New backend proposals, compatibility and open review
+  REQUESTED_CATALOG.csv      Exact 27 requested symbols, names and categories
+  01-web-release-API/        Eight runtime files, configured for same-origin /api
+  02-local-preview-DEMO/     Same interface with fixed, labeled sample data
+  03-backend-candidate-REVIEW-ONLY/  Unchanged candidate source; do not execute/deploy
+  release/                  Original API tar.gz and integrity manifests
+  RETURN_TO_JAKE/            Fill your reply; add actual evidence/changed files
+  reference/                Existing diagram and report-ready middleware section
+  PACKAGE_MANIFEST.json     SHA-256 of every other file in this team package
+
+LOCAL DESIGN PREVIEW
+From the extracted team folder, run:
+  python3 -m http.server 8000 --bind 127.0.0.1 --directory 02-local-preview-DEMO
+Open http://127.0.0.1:8000/ and stop the server with Ctrl+C when done.
+Double-clicking index.html is unsupported because the application uses JavaScript modules.
+The demo lists all 27 requested coins with fixed, labeled simulated values.
+The selected asset refreshes every 30 seconds while visible and on initial page load.
+The chart plots only quotes received during this visit; it is not historical market data.
+Original JSON is under Specifications. Monero is excluded from website selections.
+
+API RELEASE
+01-web-release-API is the candidate cloud payload. It expects the web origin's
+existing /api/db/cryptos and /api/live/<symbol> routes. A static local server
+alone does not supply those routes. The website lists the 27-coin target catalog;
+assets missing from a returned database are marked Awaiting backend support,
+with no speculative market request. The latest public check (22:10 UTC) returned
+all 27 targets with categories/descriptions; BTC, SHIB and POL market responses
+also supplied timestamp/product/unit metadata. Raw JSON stays unchanged.
+Do not substitute demo data or local categories for missing API values.
+
+Deploy only the reviewed runtime payload after Jake approves the exact plan.
+Do not copy the whole team package, demo, replies, report, screenshots or manifests
+into the public web root. Do not run cleanup/deployment commands from old handoffs.
+The API package is the current-route baseline. The new backend candidate adds
+metadata/combined routes. Jake is finalizing the optional metadata mapping/tests
+for the now-observed fields; the combined JSON contract and hosted comparison
+still require review before claiming full integration.
+
+BACKEND REVIEW
+Read BACKEND_CANDIDATE_REVIEW.md before the supplied backend README. The candidate
+was not executed or verified deployed during this packaging review. Its migration
+and instructions are proposals. Approval must precede all remote writes, including
+backups, staging, uploads, schema changes, installs and restarts. The included
+.env.example contains placeholders only; never return a real environment file.
+The 94 frontend tests do not establish candidate backend or database readiness.
+
+RETURN
+Fill RETURN_TO_JAKE/NOLAN_REPLY.md or ALEX_REPLY.md. Return only your filled reply,
+actual screenshots, sanitized JSON examples, and any proposed changed backend files.
+Use done / planned / blocked for each item; include test time, owner and next step.
+No need to resend the frontend or the narrative/diagram already received.
+Do not include .env, passwords, API/access keys, SSH keys, MFA codes or private addresses.
+
+TIMING
+Requested team return target: Friday, November 20 (a suggested coordination target).
+Canvas due date shown: Sunday, November 22, 2026, 11:59 p.m.
+The November 29 availability cutoff is not the due date.

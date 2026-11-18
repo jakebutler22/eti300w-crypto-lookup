@@ -1,0 +1,41 @@
+=== VPC and private networking - coinbase-300w ===
+Captured 2026-11-18 21:14 UTC
+
+------------------------------------------
+|              DescribeVpcs              |
++--------------+-------------------------+
+|     CIDR     |           VPC           |
++--------------+-------------------------+
+|  [private address/range redacted] |  vpc-09ce5d9f3c86d62bc  |
++--------------+-------------------------+
+------------------------------------------------------------------------
+|                            DescribeSubnets                           |
++--------------+--------------+-------------------------+--------------+
+| AutoPublicIP |    CIDR      |         Subnet          |    Zone      |
++--------------+--------------+-------------------------+--------------+
+|  False       |  [private address/range redacted] |  coinbase-300w-private  |  us-east-2a  |
+|  True        |  [private address/range redacted] |  coinbase-300w-public   |  us-east-2a  |
++--------------+--------------+-------------------------+--------------+
+Route tables (private subnet has no route to the internet gateway):
+  coinbase-300w-public-rt
+     [private address/range redacted]    -> local
+     0.0.0.0/0      -> internet gateway
+  coinbase-300w-private-rt
+     [private address/range redacted]    -> local
+     Amazon S3      -> S3 gateway endpoint (Amazon S3 only)
+
+Security group inbound rules:
+  coinbase-300w-app-sg
+     tcp 22    from <admin-ip>/32      Admin SSH
+     tcp 22    from coinbase-300w-instance-connect-sg Browser SSH via EC2 Instance Connect Endpoint
+     tcp 5000  from coinbase-300w-web-sg   Flask API from web tier
+  coinbase-300w-db-sg
+     tcp 22    from coinbase-300w-app-sg   SSH jump through app tier
+     tcp 22    from coinbase-300w-instance-connect-sg Browser SSH via EC2 Instance Connect Endpoint
+     tcp 3306  from coinbase-300w-app-sg   MySQL from app tier
+  coinbase-300w-instance-connect-sg
+     (no inbound rules)
+  coinbase-300w-web-sg
+     tcp 80    from 0.0.0.0/0              Public website
+     tcp 22    from <admin-ip>/32      Admin SSH
+     tcp 22    from coinbase-300w-instance-connect-sg Browser SSH via EC2 Instance Connect Endpoint

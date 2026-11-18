@@ -1,0 +1,20 @@
+=== Private app -> database query (runs Flask's own database.py on coinbase-300w-app) ===
+Captured 2026-11-18 21:14 UTC
+
+Instance: i-0bc386fae55104b3b   Zone: us-east-2a
+OS: Amazon Linux 2023.12.20261102
+
+Database host: [private address redacted]  (private subnet [private address/range redacted], port 3306)
+Connected to database 'crypto_db' on MariaDB 10.5.29-MariaDB
+
+get_all_cryptos() -> SELECT name, symbol, price FROM cryptocurrencies
+name       symbol        price*
+Bitcoin    BTC          30000.0
+Ethereum   ETH           2000.0
+Ripple     XRP              0.5
+Litecoin   LTC            150.0
+Cardano    ADA              1.2
+Dogecoin   DOGE            0.07
+Solana     SOL             35.0
+Monero     XMR            630.0
+8 rows.  *stored sample prices, not live market data

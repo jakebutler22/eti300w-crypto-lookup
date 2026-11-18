@@ -1,0 +1,11 @@
+{
+  "name": "eti300w-crypto-lookup",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Cryptocurrency explorer with a 27-asset catalog, watchlist and session price charts.",
+  "scripts": {
+    "serve": "python3 -m http.server 8000 --bind 127.0.0.1",
+    "test": "node --test tests/*.test.mjs"
+  }
+}

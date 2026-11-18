@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1150" viewBox="0 0 1440 1150" font-family="Helvetica, Arial, sans-serif">
+  <title>Crypto App network diagram (ETI 300W, coinbase-300w)</title>
+  <defs>
+    <marker id="a-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1d4ed8"/></marker>
+    <marker id="a-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#15803d"/></marker>
+    <marker id="a-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/></marker>
+    <marker id="a-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+    <style>
+      .t { font-size: 15px; font-weight: 700; fill: #111827; }
+      .l { font-size: 12.5px; fill: #374151; }
+      .sg { font-size: 12px; fill: #7c2d12; font-weight: 600; }
+      .zone { font-size: 13px; font-weight: 700; }
+      .lbl { font-size: 12px; font-weight: 700; paint-order: stroke; stroke: #ffffff; stroke-width: 5px; stroke-linejoin: round; }
+      .blue { stroke: #1d4ed8; fill: none; stroke-width: 2.5; }
+      .green { stroke: #15803d; fill: none; stroke-width: 2.5; }
+      .orange { stroke: #c2410c; fill: none; stroke-width: 2; stroke-dasharray: 7 5; }
+      .gray { stroke: #6b7280; fill: none; stroke-width: 2; stroke-dasharray: 4 4; }
+      .box { fill: #ffffff; stroke: #374151; stroke-width: 1.5; }
+      .ext { fill: #f9fafb; stroke: #6b7280; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <rect width="1440" height="1150" fill="#ffffff"/>
+  <text x="20" y="34" font-size="22" font-weight="700" fill="#111827">Crypto App: three-tier network (ETI 300W)</text>
+  <text x="20" y="56" font-size="13" fill="#4b5563">As deployed and verified 2026-11-18. Only components that exist are shown. Private addresses omitted.</text>
+
+  <g transform="translate(0,50)">
+    <!-- Region / VPC / AZ / subnets -->
+    <rect x="260" y="30" width="890" height="900" rx="10" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+    <text x="278" y="56" class="zone" fill="#9a3412">AWS Cloud · Region us-east-2 (Ohio) · project coinbase-300w</text>
+
+    <rect x="285" y="120" width="840" height="785" rx="8" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text x="300" y="162" class="zone" fill="#5b21b6">VPC coinbase-300w-vpc</text>
+
+    <rect x="305" y="172" width="800" height="713" rx="6" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <text x="318" y="192" class="zone" fill="#4b5563">Availability Zone us-east-2a</text>
+
+    <rect x="325" y="215" width="760" height="270" rx="6" fill="#ecfdf5" stroke="#059669" stroke-width="1.5"/>
+    <text x="338" y="236" class="zone" fill="#065f46">Public subnet · route 0.0.0.0/0 → Internet Gateway</text>
+
+    <rect x="325" y="520" width="760" height="345" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+
+    <!-- Internet gateway on the VPC edge -->
+    <rect x="620" y="98" width="200" height="44" rx="6" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+    <text x="720" y="125" text-anchor="middle" class="t">Internet Gateway</text>
+
+    <!-- External actors -->
+    <rect x="20" y="90" width="210" height="60" rx="8" class="ext"/>
+    <text x="35" y="115" class="t">Website visitor</text>
+    <text x="35" y="135" class="l">Browser, public internet</text>
+
+    <rect x="1180" y="90" width="240" height="60" rx="8" class="ext"/>
+    <text x="1195" y="115" class="t">Coinbase Exchange API</text>
+    <text x="1195" y="135" class="l">api.exchange.coinbase.com</text>
+
+    <rect x="20" y="300" width="210" height="70" rx="8" class="ext"/>
+    <text x="35" y="325" class="t">Team admin laptop</text>
+    <text x="35" y="345" class="l">SSH key, one allowed</text>
+    <text x="35" y="361" class="l">admin IP (/32)</text>
+
+    <rect x="20" y="595" width="210" height="70" rx="8" class="ext"/>
+    <text x="35" y="620" class="t">Team member</text>
+    <text x="35" y="640" class="l">AWS console, EC2</text>
+    <text x="35" y="656" class="l">Instance Connect (HTTPS)</text>
+
+    <rect x="1180" y="815" width="240" height="70" rx="8" class="ext"/>
+    <text x="1195" y="840" class="t">Amazon Linux repos</text>
+    <text x="1195" y="860" class="l">Package mirrors in Amazon S3</text>
+
+    <!-- Web server -->
+    <rect x="355" y="265" width="300" height="190" rx="8" class="box"/>
+    <text x="370" y="290" class="t">coinbase-300w-web</text>
+    <text x="370" y="310" class="l">Web tier · t3.micro · public IP</text>
+    <text x="370" y="328" class="l">Amazon Linux 2023</text>
+    <text x="370" y="346" class="l">nginx 1.30 listening on :80</text>
+    <text x="370" y="364" class="l">Serves the HTML/CSS/JS pages</text>
+    <text x="370" y="382" class="l">Forwards /api/ to Flask on :5000</text>
+    <text x="370" y="430" class="sg">web-sg: 80 from internet;</text>
+    <text x="370" y="446" class="sg">22 from admin IP / Instance Connect</text>
+
+    <!-- App server -->
+    <rect x="755" y="265" width="300" height="190" rx="8" class="box"/>
+    <text x="770" y="290" class="t">coinbase-300w-app</text>
+    <text x="770" y="310" class="l">Application tier · t3.micro · public IP</text>
+    <text x="770" y="328" class="l">Amazon Linux 2023</text>
+    <text x="770" y="346" class="l">Flask + gunicorn listening on :5000</text>
+    <text x="770" y="364" class="l">Queries MariaDB, calls Coinbase,</text>
+    <text x="770" y="382" class="l">returns JSON</text>
+    <text x="770" y="430" class="sg">app-sg: 5000 from web-sg only;</text>
+    <text x="770" y="446" class="sg">22 from admin IP / Instance Connect</text>
+
+    <!-- DB server -->
+    <rect x="755" y="585" width="300" height="175" rx="8" class="box"/>
+    <text x="770" y="610" class="t">coinbase-300w-db</text>
+    <text x="770" y="630" class="l">Database tier · t3.micro · no public IP</text>
+    <text x="770" y="648" class="l">Amazon Linux 2023</text>
+    <text x="770" y="666" class="l">MariaDB 10.5 listening on :3306</text>
+    <text x="770" y="684" class="l">crypto_db.cryptocurrencies (8 rows)</text>
+    <text x="770" y="730" class="sg">db-sg: 3306 from app-sg only;</text>
+    <text x="770" y="746" class="sg">22 from app-sg / Instance Connect</text>
+
+    <!-- Instance Connect endpoint -->
+    <rect x="355" y="580" width="300" height="100" rx="8" class="box"/>
+    <text x="370" y="605" class="t">EC2 Instance Connect Endpoint</text>
+    <text x="370" y="625" class="l">Browser SSH for team members</text>
+    <text x="370" y="643" class="l">to all three servers</text>
+    <text x="370" y="668" class="sg">sg: outbound :22 inside VPC only</text>
+
+    <!-- S3 gateway endpoint -->
+    <rect x="355" y="735" width="300" height="95" rx="8" class="box"/>
+    <text x="370" y="760" class="t">S3 gateway endpoint</text>
+    <text x="370" y="780" class="l">Lets the database install updates</text>
+    <text x="370" y="798" class="l">without any internet route</text>
+
+    <!-- Visitor request path (blue) -->
+    <path d="M230,112 H617" class="blue" marker-end="url(#a-blue)"/>
+    <text x="425" y="104" text-anchor="middle" class="lbl" fill="#1d4ed8">HTTP :80</text>
+    <path d="M680,142 V250 H505 V262" class="blue" marker-end="url(#a-blue)"/>
+    <text x="688" y="207" class="lbl" fill="#1d4ed8">HTTP :80</text>
+    <path d="M655,330 H752" class="blue" marker-end="url(#a-blue)"/>
+    <text x="705" y="322" text-anchor="middle" class="lbl" fill="#1d4ed8">HTTP :5000</text>
+    <text x="705" y="348" text-anchor="middle" class="lbl" fill="#1d4ed8">/api/ proxy</text>
+    <path d="M870,455 V582" class="blue" marker-end="url(#a-blue)"/>
+    <text x="878" y="507" class="lbl" fill="#1d4ed8">MySQL :3306</text>
+
+    <!-- Coinbase market data (green) -->
+    <path d="M905,265 V200 H780 V145" class="green" marker-end="url(#a-green)"/>
+    <text x="912" y="232" class="lbl" fill="#15803d">HTTPS :443 outbound</text>
+    <path d="M820,112 H1177" class="green" marker-end="url(#a-green)"/>
+    <text x="1000" y="104" text-anchor="middle" class="lbl" fill="#15803d">HTTPS :443</text>
+
+    <!-- Admin SSH (orange dashed) -->
+    <path d="M230,330 H352" class="orange" marker-end="url(#a-orange)"/>
+    <path d="M230,360 H340 V470 H790 V458" class="orange" marker-end="url(#a-orange)"/>
+    <text x="565" y="474" text-anchor="middle" class="lbl" fill="#c2410c">SSH :22 (via Internet Gateway)</text>
+    <path d="M1000,455 V582" class="orange" marker-end="url(#a-orange)"/>
+    <text x="1008" y="507" class="lbl" fill="#c2410c">SSH :22 jump</text>
+
+    <!-- Instance Connect (orange dashed) -->
+    <path d="M230,630 H352" class="orange" marker-end="url(#a-orange)"/>
+    <path d="M655,630 H752" class="orange" marker-end="url(#a-orange)"/>
+    <text x="705" y="622" text-anchor="middle" class="lbl" fill="#c2410c">SSH :22</text>
+    <path d="M430,580 V458" class="orange" marker-end="url(#a-orange)"/>
+    <text x="438" y="560" class="lbl" fill="#c2410c">SSH :22</text>
+    <path d="M600,580 V500 H830 V458" class="orange" marker-end="url(#a-orange)"/>
+
+    <!-- Package updates (gray dashed) -->
+    <path d="M800,760 V785 H658" class="gray" marker-end="url(#a-gray)"/>
+    <text x="728" y="778" text-anchor="middle" class="lbl" fill="#4b5563">HTTPS :443</text>
+    <path d="M505,830 V850 H1177" class="gray" marker-end="url(#a-gray)"/>
+    <text x="920" y="844" text-anchor="middle" class="lbl" fill="#4b5563">AWS network, not the internet</text>
+
+    <!-- Drawn last so the arrows crossing it pass underneath -->
+    <rect x="332" y="526" width="410" height="21" fill="#eff6ff"/>
+    <text x="338" y="541" class="zone" fill="#1e3a8a">Private subnet · no internet route (VPC-local + S3 endpoint only)</text>
+  </g>
+
+  <!-- Legend -->
+  <g transform="translate(20,1005)">
+    <text x="0" y="0" class="t">Legend</text>
+    <path d="M0,24 H50" class="blue"/><text x="60" y="28" class="l">Visitor request and database data path</text>
+    <path d="M340,24 H390" class="green"/><text x="400" y="28" class="l">Outbound market data from Coinbase</text>
+    <path d="M0,52 H50" class="orange"/><text x="60" y="56" class="l">Administrative access (SSH), separate from visitor traffic</text>
+    <path d="M440,52 H490" class="gray"/><text x="500" y="56" class="l">Operating-system package updates</text>
+    <text x="0" y="92" class="l">Not present: NAT gateway, load balancer, HTTPS/TLS on the website. Prices stored in MariaDB are sample values; live prices come from Coinbase.</text>
+    <text x="0" y="112" class="l">Every server-to-server rule references a security group, not an IP range. MySQL :3306 accepts connections only from app-sg.</text>
+  </g>
+</svg>

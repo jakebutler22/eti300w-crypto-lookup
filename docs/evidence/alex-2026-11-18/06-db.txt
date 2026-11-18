@@ -1,0 +1,43 @@
+=== Database tier - coinbase-300w-db ===
+Captured 2026-11-18 21:14 UTC
+
+Instance: i-0292ae1a67191521f   Zone: us-east-2a
+OS: Amazon Linux 2023.12.20261102
+
+--- MariaDB service
+mariadb: active since Sun 2026-11-08 23:47:52 UTC
+listening on 0.0.0.0:3306 (reachable only from app-sg)
+
++---------------+-----------------+
+| database_name | server_version  |
++---------------+-----------------+
+| crypto_db     | 10.5.29-MariaDB |
++---------------+-----------------+
++---------------------+
+| Tables_in_crypto_db |
++---------------------+
+| cryptocurrencies    |
++---------------------+
++--------+-------------+------+-----+---------+----------------+
+| Field  | Type        | Null | Key | Default | Extra          |
++--------+-------------+------+-----+---------+----------------+
+| id     | int(11)     | NO   | PRI | NULL    | auto_increment |
+| name   | varchar(64) | NO   |     | NULL    |                |
+| symbol | varchar(10) | NO   | UNI | NULL    |                |
+| price  | double      | NO   |     | NULL    |                |
++--------+-------------+------+-----+---------+----------------+
++----+----------+--------+-------------------------+
+| id | name     | symbol | stored_sample_price_usd |
++----+----------+--------+-------------------------+
+|  1 | Bitcoin  | BTC    |                   30000 |
+|  2 | Ethereum | ETH    |                    2000 |
+|  3 | Ripple   | XRP    |                     0.5 |
+|  4 | Litecoin | LTC    |                     150 |
+|  5 | Cardano  | ADA    |                     1.2 |
+|  6 | Dogecoin | DOGE   |                    0.07 |
+|  7 | Solana   | SOL    |                      35 |
+|  8 | Monero   | XMR    |                     630 |
++----+----------+--------+-------------------------+
+
+--- no internet access from the database server
+https://api.exchange.coinbase.com: unreachable (timed out), as designed

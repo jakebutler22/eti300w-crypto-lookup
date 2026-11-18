@@ -1,0 +1,68 @@
+{
+  "sourceArchive": "Alex-infrastructure-handoff-2026-11-18.zip",
+  "sourceSHA256": "527a4ac369f04fba61c6e836012e731595aada7abf94c6899ad4ed5c20aeb679",
+  "capturedTimeAsReported": "2026-11-18T21:14:00Z",
+  "source": "Alex-supplied handoff; not independently re-run",
+  "files": [
+    {
+      "path": "06-db.txt",
+      "originalSHA256": "4277be880f1ffa47c19f77dff10276ae537b6f06ca26f8baef982a979d241117",
+      "savedSHA256": "4277be880f1ffa47c19f77dff10276ae537b6f06ca26f8baef982a979d241117",
+      "redactedCopy": false
+    },
+    {
+      "path": "05-query.txt",
+      "originalSHA256": "61961b0e3867ab12babaf7e7f970f0dfb50f26e3cb9ed6d4ccd975d87ea25d37",
+      "savedSHA256": "14e043c672491e6558a43a5da5b1b6d68a5125b2b557fbf9980a6b3f4f2604f2",
+      "redactedCopy": true
+    },
+    {
+      "path": "01-instances.txt",
+      "originalSHA256": "2f3bdb558da10886501b87e8d384c6fe12cdb1c221ccc1486ba71dd389e8cbcc",
+      "savedSHA256": "2f3bdb558da10886501b87e8d384c6fe12cdb1c221ccc1486ba71dd389e8cbcc",
+      "redactedCopy": false
+    },
+    {
+      "path": "02-network.txt",
+      "originalSHA256": "b663169a56f1c1063bd5c9debabbc6d099efe37d7602db6b0c706d60813629bd",
+      "savedSHA256": "49a6e016ee02b0bddd4db2a7c364c0dc903a1b22ff6677a1f55af9d27d1666b2",
+      "redactedCopy": true
+    },
+    {
+      "path": "03-web.txt",
+      "originalSHA256": "92d67e9d6baa629a21c62005bce7bdeb0c96e795d31b87d9436982c4a800a3ca",
+      "savedSHA256": "92d67e9d6baa629a21c62005bce7bdeb0c96e795d31b87d9436982c4a800a3ca",
+      "redactedCopy": false
+    },
+    {
+      "path": "04-app.txt",
+      "originalSHA256": "ef79afc12a65de5e29f4d59e5bbc400edea2bf4fe16f750b7a96b77e4ca61779",
+      "savedSHA256": "ef79afc12a65de5e29f4d59e5bbc400edea2bf4fe16f750b7a96b77e4ca61779",
+      "redactedCopy": false
+    },
+    {
+      "path": "network-diagram.png",
+      "originalSHA256": "d25333c78a26de75530a8100b75d3fde4025edfee62a982f0a2bb328f75d6e1c",
+      "savedSHA256": "d25333c78a26de75530a8100b75d3fde4025edfee62a982f0a2bb328f75d6e1c",
+      "redactedCopy": false
+    },
+    {
+      "path": "network-diagram.pdf",
+      "originalSHA256": "579cc796823ed099f56c77a1740901972294ff19164f446ccacfa6001f690b43",
+      "savedSHA256": "579cc796823ed099f56c77a1740901972294ff19164f446ccacfa6001f690b43",
+      "redactedCopy": false
+    },
+    {
+      "path": "alex-handoff.source.txt",
+      "originalSHA256": "5bc4ff7cca093c533e51ba9b9b6c180810eda3f6b21fe18adfea1d5cddbe67b3",
+      "savedSHA256": "5bc4ff7cca093c533e51ba9b9b6c180810eda3f6b21fe18adfea1d5cddbe67b3",
+      "redactedCopy": false
+    },
+    {
+      "path": "network-diagram.svg",
+      "originalSHA256": "0bfa12e26fa6a0bf1c2d15e2ebededfc95dd0acda1aee6c6b7c550b36122441f",
+      "savedSHA256": "0bfa12e26fa6a0bf1c2d15e2ebededfc95dd0acda1aee6c6b7c550b36122441f",
+      "redactedCopy": false
+    }
+  ]
+}

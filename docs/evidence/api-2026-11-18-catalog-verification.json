@@ -1,0 +1,846 @@
+{
+  "checkedUTC": "2026-11-18T22:11:19.002005+00:00",
+  "origin": "http://3.145.42.74",
+  "scope": "Read-only public HTTP observations; not a claim of deployment by this assistant or remote file identity.",
+  "catalog": [
+    {
+      "symbol": "BTC",
+      "name": "Bitcoin",
+      "category": "Digital currency",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "ETH",
+      "name": "Ethereum",
+      "category": "Smart contract platform",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "XRP",
+      "name": "Ripple",
+      "category": "Payments",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "LTC",
+      "name": "Litecoin",
+      "category": "Digital currency",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "ADA",
+      "name": "Cardano",
+      "category": "Smart contract platform",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "DOGE",
+      "name": "Dogecoin",
+      "category": "Meme cryptocurrency",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "SOL",
+      "name": "Solana",
+      "category": "Smart contract platform",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "BCH",
+      "name": "Bitcoin Cash",
+      "category": "Digital currency",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "LINK",
+      "name": "Chainlink",
+      "category": "Oracle network",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "AVAX",
+      "name": "Avalanche",
+      "category": "Smart contract platform",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "DOT",
+      "name": "Polkadot",
+      "category": "Interoperability",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "XLM",
+      "name": "Stellar",
+      "category": "Payments",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "UNI",
+      "name": "Uniswap",
+      "category": "Decentralized exchange",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "ATOM",
+      "name": "Cosmos",
+      "category": "Interoperability",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "SHIB",
+      "name": "Shiba Inu",
+      "category": "Meme cryptocurrency",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "POL",
+      "name": "Polygon",
+      "category": "Layer 2 scaling",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "ETC",
+      "name": "Ethereum Classic",
+      "category": "Smart contract platform",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "HBAR",
+      "name": "Hedera",
+      "category": "Smart contract platform",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "NEAR",
+      "name": "NEAR Protocol",
+      "category": "Smart contract platform",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "AAVE",
+      "name": "Aave",
+      "category": "Lending protocol",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "ICP",
+      "name": "Internet Computer",
+      "category": "Smart contract platform",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "APT",
+      "name": "Aptos",
+      "category": "Smart contract platform",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "ARB",
+      "name": "Arbitrum",
+      "category": "Layer 2 scaling",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "OP",
+      "name": "Optimism",
+      "category": "Layer 2 scaling",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "SUI",
+      "name": "Sui",
+      "category": "Smart contract platform",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "ALGO",
+      "name": "Algorand",
+      "category": "Smart contract platform",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    },
+    {
+      "symbol": "FIL",
+      "name": "Filecoin",
+      "category": "Decentralized storage",
+      "hasDescription": true,
+      "price_type": "stored_sample"
+    }
+  ],
+  "markets": [
+    {
+      "symbol": "BTC",
+      "path": "/api/live/BTC",
+      "status": 200,
+      "product_id": "BTC-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:16.966062268Z",
+      "volume_unit": "BTC",
+      "volume_24h_unit": "BTC",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "ETH",
+      "path": "/api/live/ETH",
+      "status": 200,
+      "product_id": "ETH-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:17.080873661Z",
+      "volume_unit": "ETH",
+      "volume_24h_unit": "ETH",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "XRP",
+      "path": "/api/live/XRP",
+      "status": 200,
+      "product_id": "XRP-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:16.615999931Z",
+      "volume_unit": "XRP",
+      "volume_24h_unit": "XRP",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "LTC",
+      "path": "/api/live/LTC",
+      "status": 200,
+      "product_id": "LTC-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:14.442886732Z",
+      "volume_unit": "LTC",
+      "volume_24h_unit": "LTC",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "ADA",
+      "path": "/api/live/ADA",
+      "status": 200,
+      "product_id": "ADA-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:15.407122417Z",
+      "volume_unit": "ADA",
+      "volume_24h_unit": "ADA",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "DOGE",
+      "path": "/api/live/DOGE",
+      "status": 200,
+      "product_id": "DOGE-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:10:59.799690766Z",
+      "volume_unit": "DOGE",
+      "volume_24h_unit": "DOGE",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "SOL",
+      "path": "/api/live/SOL",
+      "status": 200,
+      "product_id": "SOL-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:15.409957094Z",
+      "volume_unit": "SOL",
+      "volume_24h_unit": "SOL",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "BCH",
+      "path": "/api/live/BCH",
+      "status": 200,
+      "product_id": "BCH-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:06.507232288Z",
+      "volume_unit": "BCH",
+      "volume_24h_unit": "BCH",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "LINK",
+      "path": "/api/live/LINK",
+      "status": 200,
+      "product_id": "LINK-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:15.412932956Z",
+      "volume_unit": "LINK",
+      "volume_24h_unit": "LINK",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "AVAX",
+      "path": "/api/live/AVAX",
+      "status": 200,
+      "product_id": "AVAX-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:15.421470377Z",
+      "volume_unit": "AVAX",
+      "volume_24h_unit": "AVAX",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "DOT",
+      "path": "/api/live/DOT",
+      "status": 200,
+      "product_id": "DOT-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:00.524866466Z",
+      "volume_unit": "DOT",
+      "volume_24h_unit": "DOT",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "XLM",
+      "path": "/api/live/XLM",
+      "status": 200,
+      "product_id": "XLM-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:13.638576042Z",
+      "volume_unit": "XLM",
+      "volume_24h_unit": "XLM",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "UNI",
+      "path": "/api/live/UNI",
+      "status": 200,
+      "product_id": "UNI-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:15.425189279Z",
+      "volume_unit": "UNI",
+      "volume_24h_unit": "UNI",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "ATOM",
+      "path": "/api/live/ATOM",
+      "status": 200,
+      "product_id": "ATOM-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:01.767754555Z",
+      "volume_unit": "ATOM",
+      "volume_24h_unit": "ATOM",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "SHIB",
+      "path": "/api/live/SHIB",
+      "status": 200,
+      "product_id": "SHIB-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:09:42.940031915Z",
+      "volume_unit": "SHIB",
+      "volume_24h_unit": "SHIB",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "POL",
+      "path": "/api/live/POL",
+      "status": 200,
+      "product_id": "POL-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:10:52.476847455Z",
+      "volume_unit": "POL",
+      "volume_24h_unit": "POL",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "ETC",
+      "path": "/api/live/ETC",
+      "status": 200,
+      "product_id": "ETC-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:10:49.352751965Z",
+      "volume_unit": "ETC",
+      "volume_24h_unit": "ETC",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "HBAR",
+      "path": "/api/live/HBAR",
+      "status": 200,
+      "product_id": "HBAR-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:13.268344839Z",
+      "volume_unit": "HBAR",
+      "volume_24h_unit": "HBAR",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "NEAR",
+      "path": "/api/live/NEAR",
+      "status": 200,
+      "product_id": "NEAR-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:14.216003537Z",
+      "volume_unit": "NEAR",
+      "volume_24h_unit": "NEAR",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "AAVE",
+      "path": "/api/live/AAVE",
+      "status": 200,
+      "product_id": "AAVE-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:04.762206072Z",
+      "volume_unit": "AAVE",
+      "volume_24h_unit": "AAVE",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "ICP",
+      "path": "/api/live/ICP",
+      "status": 200,
+      "product_id": "ICP-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:00.491804075Z",
+      "volume_unit": "ICP",
+      "volume_24h_unit": "ICP",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "APT",
+      "path": "/api/live/APT",
+      "status": 200,
+      "product_id": "APT-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:10:22.887983788Z",
+      "volume_unit": "APT",
+      "volume_24h_unit": "APT",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "ARB",
+      "path": "/api/live/ARB",
+      "status": 200,
+      "product_id": "ARB-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:05.410902562Z",
+      "volume_unit": "ARB",
+      "volume_24h_unit": "ARB",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "OP",
+      "path": "/api/live/OP",
+      "status": 200,
+      "product_id": "OP-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:10:22.967340820Z",
+      "volume_unit": "OP",
+      "volume_24h_unit": "OP",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "SUI",
+      "path": "/api/live/SUI",
+      "status": 200,
+      "product_id": "SUI-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:16.033813912Z",
+      "volume_unit": "SUI",
+      "volume_24h_unit": "SUI",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "ALGO",
+      "path": "/api/live/ALGO",
+      "status": 200,
+      "product_id": "ALGO-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:11:16.156008967Z",
+      "volume_unit": "ALGO",
+      "volume_24h_unit": "ALGO",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    },
+    {
+      "symbol": "FIL",
+      "path": "/api/live/FIL",
+      "status": 200,
+      "product_id": "FIL-USD",
+      "quote_currency": "USD",
+      "provider_timestamp": "2026-11-18T22:10:56.559825201Z",
+      "volume_unit": "FIL",
+      "volume_24h_unit": "FIL",
+      "price_valid": true,
+      "keys": [
+        "name",
+        "price",
+        "product_id",
+        "provider_timestamp",
+        "quote_currency",
+        "retrieved_at",
+        "source",
+        "symbol",
+        "volume_24h",
+        "volume_24h_unit",
+        "volume_unit"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+=== Application tier - coinbase-300w-app ===
+Captured 2026-11-18 21:14 UTC
+
+Instance: i-0bc386fae55104b3b   Zone: us-east-2a
+OS: Amazon Linux 2023.12.20261102
+
+--- Flask service (gunicorn)
+● crypto-backend.service - Crypto backend API
+     Loaded: loaded (/etc/systemd/system/crypto-backend.service; enabled; preset: disabled)
+     Active: active (running) since Sun 2026-11-08 23:47:59 UTC; 1 week 2 days ago
+listening on 0.0.0.0:5000
+
+--- deployed code /opt/crypto-backend
+0d9c7214012c3b57...  app.py
+92e0f36abcd1ac5a...  database.py
+688da527e36eb2fd...  requirements.txt
+Python 3.9.25
+Flask                  3.1.3
+gunicorn               23.0.0
+mysql-connector-python 9.4.0
+requests               2.32.5
+
+--- no database runs on this server
+MariaDB: not installed on the app server
+
+--- app -> Coinbase test: GET /api/live/BTC
+{"name":"Bitcoin","price":62361.94,"source":"Coinbase Exchange","symbol":"BTC","volume_24h":11431.29545037}
+  [HTTP 200]
