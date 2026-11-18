@@ -1,5 +1,11 @@
 # Verification record
 
+## Production wording and default mode update
+
+The page is titled Explore cryptocurrency. Static production HTML/FAQs contain no sample/demo/simulated boilerplate. Default mode is API, with a localhost-only development proxy provided by `npm run serve`. The explicit offline preview remains truthfully labeled. All **96/96 tests pass**, including default live requests and failure without fixture fallback. HTTP checks of the local preview returned the 27-record real catalog and a Coinbase BTC response; non-runtime files and unsupported proxy routes returned 404. Actual Safari rendered a live BTC quote with an API snapshot label and no sample wording.
+
+Public HTTP observation at 5:22 p.m. Eastern found the preceding interface deployed in API mode. This new title/copy/config release requires subsequent hosted verification; no AWS write was made by this assistant.
+
 ## Latest 27-asset release verification · November 18, 2026
 
 - `npm test`: **94/94 passed**, including exact catalog identity/categories, real zero/tiny values, session chart geometry, optional metadata validation, partial failures, request cancellation and Retry-After handling.

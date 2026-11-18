@@ -1,8 +1,8 @@
 // Nolan's supplied Flask routes, through the presentation server's /api proxy.
-// Keep demo mode until that proxy and the real database are available.
+// Production uses the verified same-origin API; local preview supplies a read-only proxy.
 // No production addresses or secrets belong here.
 export const APP_CONFIG = {
-  mode: "demo",
+  mode: "api",
   apiBaseUrl: "/api",
   apiContract: "nolan-v1",
   catalogPath: "/db/cryptos",

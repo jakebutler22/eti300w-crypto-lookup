@@ -1,5 +1,9 @@
 # API contract
 
+## Production default and copy cleanup
+
+The public origin was observed serving Crypto Context and API mode at 5:22 p.m. Eastern on November 18. The repository now defaults to API mode too. `npm run serve` uses `scripts/serve_frontend.py` for a localhost-only, read-only proxy to the public catalog/market routes; the default cannot silently show fixtures on failure. Explicit offline previews remain available with `npm run serve:demo`. Production HTML/FAQs no longer contain sample-data boilerplate. Original JSON payloads remain unchanged. This newer release still requires hosted verification after the team deploys it; no AWS write was performed here.
+
 ## Latest public verification · 22:12 UTC, November 18
 
 The backend now returns all 27 requested catalog records with category/description. All 27 selected market routes returned HTTP 200 in the [read-only check](evidence/api-2026-11-18-catalog-verification.json). BTC, SHIB and POL were also inspected with explicit `product_id`, `quote_currency`, `provider_timestamp`, `volume_unit` and `volume_24h_unit`. The adapter now maps valid optional metadata while retaining compatibility with earlier responses that lack it. Stored database prices remain excluded from market values. Browser receipt time and provider observation time remain distinct.

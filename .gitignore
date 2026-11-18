@@ -14,3 +14,7 @@ node_modules/
 docs/screenshots/*.png
 docs/screenshots/*.jpg
 docs/screenshots/*.jpeg
+
+# Python development artifacts
+__pycache__/
+*.py[cod]

@@ -4,7 +4,7 @@ Hey Nolan and Alex,
 
 The attached ZIP has the updated frontend, local demo, unchanged backend candidate, current status and reply templates. I already have your infrastructure packet, middleware write-up and backend upgrade files; no need to resend them.
 
-The frontend now has the Explore layout, watchlist/sorting, all 27 requested coins, JSON under Specifications, selected-asset refresh every 30 seconds and on page load, and a session price chart. Monero is removed from the website. The 94 automated frontend checks pass locally; this includes validation of the new timestamps, volume units and USD product metadata. The latest changes still need hosted verification; earlier Safari checks against our real API do not establish cloud deployment of this release.
+The frontend now has the Explore layout, watchlist/sorting, all 27 requested coins, JSON under Specifications, selected-asset refresh every 30 seconds and on page load, and a session price chart. Monero is removed from the website. The 96 automated frontend checks pass locally; this includes validation of the new timestamps, volume units and USD product metadata. The latest changes still need hosted verification; earlier Safari checks against our real API do not establish cloud deployment of this release.
 
 The public API was rechecked at 22:10 UTC: /api/db/cryptos now returns all 27 requested coins with categories/descriptions, and BTC, SHIB and POL market requests succeed with product, timestamp and volume-unit fields. Those gaps have progressed; we don't need another 27-coin implementation request. This does not establish the exact deployed source version or complete every route/test.
 

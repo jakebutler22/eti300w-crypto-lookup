@@ -1,7 +1,7 @@
-import { APP_CONFIG } from './config.js?v=20261118-context';
-import { formatUsdPrice, formatVolume, classifyFreshness, appendPriceObservation, priceChartGeometry } from './data-state.js?v=20261118-context';
-import { ApiError, getAssetDirectory, loadAssetDirectory, lookupAsset } from './api.js?v=20261118-context';
-import { DEMO_ASSETS, TEAM_ASSETS } from './data/demo-assets.js?v=20261118-context';
+import { APP_CONFIG } from './config.js?v=20261118-live';
+import { formatUsdPrice, formatVolume, classifyFreshness, appendPriceObservation, priceChartGeometry } from './data-state.js?v=20261118-live';
+import { ApiError, getAssetDirectory, loadAssetDirectory, lookupAsset } from './api.js?v=20261118-live';
+import { DEMO_ASSETS, TEAM_ASSETS } from './data/demo-assets.js?v=20261118-live';
 
 const $ = (id) => document.getElementById(id);
 const isDemo = APP_CONFIG.mode === 'demo';
@@ -372,7 +372,7 @@ function showAwaitingSupport(asset) {
   updateDirectorySelection();
   $('error-eyebrow').textContent = 'Team catalog';
   $('error-title').textContent = 'Awaiting backend support';
-  $('error-description').textContent = `${asset.name} (${asset.symbol}) is in the requested team catalog, but the database API has not returned this asset. Team catalog category: ${asset.category}. No market request was sent and no sample price is shown.`;
+  $('error-description').textContent = `${asset.name} (${asset.symbol}) is in the requested team catalog, but the database API has not returned this asset. Category: ${asset.category}. No market request was sent.`;
   const suggestion = directory.find((item) => item.backendAvailable === true);
   $('error-action').textContent = suggestion ? `Look up ${suggestion.name}` : 'Reload database catalog';
   $('error-action').dataset.action = suggestion ? 'suggestion' : 'catalog';
@@ -427,7 +427,7 @@ function renderAsset(response, { announceResult = true } = {}) {
   $('profile-source-tag').textContent = mode === 'demo' ? 'Sample data' : response.contract === 'nolan-v1' ? 'Database' : 'Via API';
   $('market-source-tag').textContent = !marketAvailable ? 'Unavailable' : simulated ? 'Simulated' : 'Via API';
   if (!isDemo) {
-    setApiNotice(simulated ? 'The middleware labeled this response as simulated. These figures are demo values.'
+    setApiNotice(simulated ? 'The middleware marked this response as simulated.'
       : response.warnings?.length ? 'API response received. Some profile and market information is unavailable; those fields are marked below.'
         : 'Data retrieved through Flask. The selected asset refreshes every 30 seconds while this tab is visible. Check its source and timestamp.');
   }
@@ -715,6 +715,13 @@ if (!isDemo) {
 } else {
   $('directory-title').textContent = 'Sample crypto prices';
   $('directory-caption').textContent = 'Fixed sample prices and volumes. No live market connection.';
+  $('profile-source-copy').textContent = 'Sample asset profiles.';
+  $('market-source-copy').textContent = 'Fixed sample quotes.';
+  $('profile-source-tag').textContent = 'Sample data';
+  $('market-source-tag').textContent = 'Simulated';
+  $('faq-live-answer').textContent = 'This preview uses fixed sample prices and volumes. It has no live market connection. The sample label beside each asset identifies these demonstration values.';
+  $('faq-missing-answer').textContent = 'This preview contains sample asset profiles. In the live website, fields absent from the database or market API remain unavailable.';
+  $('faq-refresh-answer').textContent = 'The selected asset reloads on page load and every 30 seconds while this tab is visible. You can also reload it manually. Sample prices remain fixed.';
 }
 
 async function initializeNolanDirectory() {

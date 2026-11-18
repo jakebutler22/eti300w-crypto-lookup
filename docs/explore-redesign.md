@@ -36,3 +36,7 @@ All 27 public market routes returned HTTP 200 during the latest read-only check,
 ## Final copy cleanup
 
 Renamed the page Crypto Context and FAQ heading FAQs. Navigation now follows document order: Explore → Data sources → Learn. Removed the refresh summary strip, API status banner, source tags, directory caption and promotional section taglines; retained the asset count and essential quote/sample/freshness information. Normal refresh countdowns are hidden while rate-limit guidance remains visible.
+
+## Live production wording
+
+The heading and browser title are Explore cryptocurrency. Production HTML, FAQs and loading placeholders no longer contain sample/demo wording. API mode is now the source default. Local development forwards only the public GET catalog/market routes; explicit offline preview keeps its actual fixture labels. Original JSON is preserved, including stored-price metadata supplied by the database, which is never used as a market price.

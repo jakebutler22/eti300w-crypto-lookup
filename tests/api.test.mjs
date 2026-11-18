@@ -12,6 +12,8 @@ const apiConfig = {
   requestTimeoutMs: 100,
 };
 
+const demoConfig = { ...APP_CONFIG, mode: "demo" };
+
 const envelope = () => ({ data: structuredClone(DEMO_ASSETS[0]) });
 const isCode = (code) => (error) => error instanceof ApiError && error.code === code;
 
@@ -22,8 +24,8 @@ function mockJson(t, body, status = 200) {
   }));
 }
 
-test("default mode is explicit demo and the directory contains all 27 requested assets", () => {
-  assert.equal(APP_CONFIG.mode, "demo");
+test("default mode uses the production API and explicit fixtures contain all 27 requested assets", () => {
+  assert.equal(APP_CONFIG.mode, "api");
   assert.equal(APP_CONFIG.apiBaseUrl, "/api");
   assert.equal(APP_CONFIG.lookupPath, "/cryptocurrencies");
   assert.equal(APP_CONFIG.apiContract, "nolan-v1");
@@ -35,6 +37,32 @@ test("default mode is explicit demo and the directory contains all 27 requested 
   assert.deepEqual(Object.keys(directory[0]), ["symbol", "name", "category"]);
   directory[0].name = "Changed";
   assert.equal(getAssetDirectory()[0].name, "Bitcoin");
+});
+
+test("default lookups load the real directory and Coinbase market route without using fixtures", async (t) => {
+  const catalog = [{ symbol: "BTC", name: "Backend Bitcoin", category: "Backend category", price: 123 }];
+  const market = { symbol: "BTC", price: 90123.45, volume_24h: 75.5, source: "Coinbase Exchange" };
+  const mock = t.mock.method(globalThis, "fetch", async (url) => {
+    if (url === "/api/db/cryptos") return new Response(JSON.stringify(catalog));
+    assert.equal(url, "/api/live/BTC");
+    return new Response(JSON.stringify(market));
+  });
+  assert.deepEqual(await loadAssetDirectory(), [{ symbol: "BTC", name: "Backend Bitcoin", category: "Backend category" }]);
+  const result = await lookupAsset("Backend Bitcoin");
+  assert.equal(result.mode, "api");
+  assert.equal(result.data.name, "Backend Bitcoin");
+  assert.equal(result.data.market.priceUsd, market.price);
+  assert.notEqual(result.data.market.priceUsd, catalog[0].price);
+  assert.equal(result.data.simulated, false);
+  assert.deepEqual(result.raw, { profiles: catalog, market });
+  assert.deepEqual(mock.mock.calls.map(({ arguments: [url] }) => url), ["/api/db/cryptos", "/api/db/cryptos", "/api/live/BTC"]);
+});
+
+test("default API failures cannot silently return sample prices or a fixture directory", async (t) => {
+  const mock = t.mock.method(globalThis, "fetch", async () => new Response(JSON.stringify({ error: "Database unavailable" }), { status: 503 }));
+  await assert.rejects(loadAssetDirectory(), isCode("DATABASE_UNAVAILABLE"));
+  await assert.rejects(lookupAsset("BTC"), isCode("DATABASE_UNAVAILABLE"));
+  assert.equal(mock.mock.callCount(), 2);
 });
 
 test("the requested directory preserves all supplied names and categories without Monero or USDC", () => {
@@ -76,7 +104,7 @@ test("the requested directory preserves all supplied names and categories withou
 
 test("demo searches match ticker and name without case or outer-whitespace sensitivity", async () => {
   const [ticker, name, multiword] = await Promise.all([
-    lookupAsset(" btc "), lookupAsset("eThErEuM"), lookupAsset("  Bitcoin   Cash "),
+    lookupAsset(" btc ", { config: demoConfig }), lookupAsset("eThErEuM", { config: demoConfig }), lookupAsset("  Bitcoin   Cash ", { config: demoConfig }),
   ]);
   assert.equal(ticker.data.symbol, "BTC");
   assert.equal(name.data.symbol, "ETH");
@@ -94,7 +122,7 @@ test("demo searches match ticker and name without case or outer-whitespace sensi
 
 test("every requested asset has a complete independently usable demo record", async () => {
   await Promise.all(getAssetDirectory().map(async ({ symbol }) => {
-    const { data } = await lookupAsset(symbol);
+    const { data } = await lookupAsset(symbol, { config: demoConfig });
     assert.ok(data.description.length > 50);
     assert.ok(Number.isFinite(data.market.priceUsd));
     assert.ok(Number.isFinite(data.market.volume24hUsd));
@@ -107,30 +135,30 @@ test("every requested asset has a complete independently usable demo record", as
 test("expanded samples never fetch market data and removed assets cannot be selected", async (t) => {
   const mock = t.mock.method(globalThis, "fetch", async () => { throw new Error("Samples must stay local"); });
   await Promise.all(TEAM_ASSETS.map(async ({ name, symbol }) => {
-    const { data } = await lookupAsset(name);
+    const { data } = await lookupAsset(name, { config: demoConfig });
     assert.equal(data.symbol, symbol);
     assert.equal(data.market.asOf, "2026-11-08T14:00:00Z");
     assert.match(data.sources.market, /Simulated/);
   }));
-  await assert.rejects(lookupAsset("XMR"), isCode("NOT_FOUND"));
-  await assert.rejects(lookupAsset("Monero"), isCode("NOT_FOUND"));
-  await assert.rejects(lookupAsset("USDC"), isCode("NOT_FOUND"));
+  await assert.rejects(lookupAsset("XMR", { config: demoConfig }), isCode("NOT_FOUND"));
+  await assert.rejects(lookupAsset("Monero", { config: demoConfig }), isCode("NOT_FOUND"));
+  await assert.rejects(lookupAsset("USDC", { config: demoConfig }), isCode("NOT_FOUND"));
   assert.equal(mock.mock.callCount(), 0);
 });
 
 test("empty, unsupported, oversized, and unknown searches have explicit errors", async () => {
-  await assert.rejects(lookupAsset("  "), isCode("EMPTY_QUERY"));
-  await assert.rejects(lookupAsset(null), isCode("INVALID_QUERY"));
-  await assert.rejects(lookupAsset("A".repeat(121)), isCode("INVALID_QUERY"));
-  await assert.rejects(lookupAsset("not-a-coin"), isCode("NOT_FOUND"));
+  await assert.rejects(lookupAsset("  ", { config: demoConfig }), isCode("EMPTY_QUERY"));
+  await assert.rejects(lookupAsset(null, { config: demoConfig }), isCode("INVALID_QUERY"));
+  await assert.rejects(lookupAsset("A".repeat(121), { config: demoConfig }), isCode("INVALID_QUERY"));
+  await assert.rejects(lookupAsset("not-a-coin", { config: demoConfig }), isCode("NOT_FOUND"));
 });
 
 test("demo cancellation supports pending and already cancelled requests", async () => {
   const controller = new AbortController();
-  const pending = lookupAsset("BTC", { signal: controller.signal });
+  const pending = lookupAsset("BTC", { signal: controller.signal, config: demoConfig });
   controller.abort();
   await assert.rejects(pending, (error) => isCode("ABORTED")(error) && error.name === "AbortError");
-  await assert.rejects(lookupAsset("BTC", { signal: controller.signal }), isCode("ABORTED"));
+  await assert.rejects(lookupAsset("BTC", { signal: controller.signal, config: demoConfig }), isCode("ABORTED"));
 });
 
 test("API requests encode search, use GET JSON, and preserve original JSON", async (t) => {

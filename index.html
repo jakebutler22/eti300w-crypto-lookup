@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Explore cryptocurrency profiles, USD prices and 24-hour trading volume.">
     <meta name="theme-color" content="#ffffff">
-    <title>Crypto Context</title>
-    <link rel="icon" href="./favicon.svg?v=20261118-context" type="image/svg+xml">
-    <link rel="stylesheet" href="./style.css?v=20261118-context">
-    <script type="module" src="./script.js?v=20261118-context"></script>
+    <title>Explore cryptocurrency</title>
+    <link rel="icon" href="./favicon.svg?v=20261118-live" type="image/svg+xml">
+    <link rel="stylesheet" href="./style.css?v=20261118-live">
+    <script type="module" src="./script.js?v=20261118-live"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -26,7 +26,7 @@
 
     <main id="main" tabindex="-1">
       <section id="explorer" class="search-section" aria-labelledby="page-title">
-        <h1 id="page-title">Crypto Context</h1>
+        <h1 id="page-title">Explore cryptocurrency</h1>
 
         <form id="search-form" role="search" novalidate>
           <label class="sr-only" for="asset-search">Search by cryptocurrency name or ticker</label>
@@ -49,7 +49,7 @@
 
       <div class="catalog-count" aria-label="Catalog information"><strong id="summary-asset-count">27</strong> assets</div>
       <div class="mode-notice" id="mode-notice" hidden>
-        <p><strong id="environment-label">Sample data.</strong> Prices and volumes are fixed examples.</p>
+        <p><strong id="environment-label">Market data.</strong></p>
       </div>
       <p id="search-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
 
@@ -69,10 +69,10 @@
           <div id="directory-empty" class="directory-empty" hidden>
             <span class="empty-search-icon" aria-hidden="true">⌕</span>
             <h3>No assets to show</h3>
-            <p id="directory-empty-message">No matching sample assets.</p>
+            <p id="directory-empty-message">No matching assets.</p>
             <button id="reset-filter" class="button button-secondary" type="button">Show all assets</button>
           </div>
-          <div class="directory-footer"><p id="directory-caption" class="directory-caption" hidden>Fixed sample prices. Select an asset for details.</p><span class="result-count"><span id="asset-count">27</span> assets</span></div>
+          <div class="directory-footer"><p id="directory-caption" class="directory-caption" hidden>Select an asset for details.</p><span class="result-count"><span id="asset-count">27</span> assets</span></div>
         </section>
 
         <aside id="detail-panel" class="asset-detail" aria-label="Selected cryptocurrency details" aria-busy="true">
@@ -82,10 +82,10 @@
             <p id="error-eyebrow" class="state-label">Search results</p><h2 id="error-title">Enter a name or ticker</h2><p id="error-description"></p><p id="error-refresh-status" class="refresh-status" aria-live="off"></p><button id="error-action" type="button" class="button button-primary">Look up Bitcoin</button>
           </div>
           <article id="asset-content" hidden>
-            <div class="asset-header"><div class="asset-identity"><span id="detail-icon" class="asset-symbol-mark" aria-hidden="true"></span><div><h2 id="detail-name"></h2><p class="asset-pair"><span id="detail-symbol"></span><span class="pair-divider"> / </span>USD</p></div></div><span id="detail-badge" class="data-badge">Sample data</span></div>
+            <div class="asset-header"><div class="asset-identity"><span id="detail-icon" class="asset-symbol-mark" aria-hidden="true"></span><div><h2 id="detail-name"></h2><p class="asset-pair"><span id="detail-symbol"></span><span class="pair-divider"> / </span>USD</p></div></div><span id="detail-badge" class="data-badge">Market data</span></div>
             <p id="market-notice" class="market-notice" role="status" hidden></p>
             <div class="metric-grid">
-              <div class="metric price-metric"><h3>Price <span>(USD)</span></h3><p id="detail-price" class="metric-value"></p><p id="price-caption" class="metric-caption">Simulated price</p></div>
+              <div class="metric price-metric"><h3>Price <span>(USD)</span></h3><p id="detail-price" class="metric-value"></p><p id="price-caption" class="metric-caption">Last-traded price</p></div>
               <div class="metric volume-metric"><h3>24-hour volume <span id="volume-unit">(USD)</span></h3><p id="detail-volume" class="metric-value"></p><p id="volume-caption" class="metric-caption"></p></div>
             </div>
             <section class="price-chart-section" aria-labelledby="chart-title">
@@ -104,7 +104,7 @@
             <div class="asset-actions"><button id="refresh-asset" class="button button-primary" type="button">Refresh now</button></div>
             <p id="refresh-status" class="refresh-status" aria-live="off"></p>
             <section class="profile-section" aria-labelledby="overview-title"><h3 id="overview-title">About this asset</h3><p id="detail-description" class="asset-description"></p><details class="asset-specs"><summary>Specifications</summary><dl class="profile-facts"><div><dt>Category</dt><dd id="detail-category"></dd></div><div><dt>Quote currency</dt><dd>US dollar (USD)</dd></div><div><dt>Refresh interval</dt><dd>30 seconds</dd></div></dl><button id="view-json" class="text-button" type="button">View JSON response <span aria-hidden="true">↗</span></button></details></section>
-            <div class="data-provenance"><p><span id="freshness-label">Demo snapshot</span><span class="metadata-divider" aria-hidden="true"> · </span><time id="detail-timestamp"></time></p><p id="freshness-description">Fixed sample values. No live market connection.</p></div>
+            <div class="data-provenance"><p><span id="freshness-label">Provider timestamp</span><span class="metadata-divider" aria-hidden="true"> · </span><time id="detail-timestamp"></time></p><p id="freshness-description">Loading market information…</p></div>
           </article>
         </aside>
       </div>
@@ -112,21 +112,21 @@
       <section id="methodology" class="sources-section" aria-labelledby="sources-title">
         <div class="section-heading"><div><h2 id="sources-title">Behind the numbers</h2></div></div>
         <div class="source-columns">
-          <div class="source-item"><div class="source-heading"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3" stroke="currentColor" stroke-width="1.6"/><path d="M4 5v7c0 1.66 3.58 3 8 3s8-1.34 8-3V5M4 12v7c0 1.66 3.58 3 8 3s8-1.34 8-3v-7" stroke="currentColor" stroke-width="1.6"/></svg><h3>Asset profiles</h3><span id="profile-source-tag" class="source-label" hidden>Sample data</span></div><p id="profile-source-copy">This demo includes sample profiles. In API mode, profiles come from the database through Flask.</p></div>
-          <div class="source-item"><div class="source-heading"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19V5m0 14h16M7 14l4-5 4 3 5-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><h3>Market snapshots</h3><span id="market-source-tag" class="source-label" hidden>Simulated</span></div><p id="market-source-copy">The demo uses fixed sample figures. In API mode, market data is requested from Coinbase Exchange through Flask.</p></div>
+          <div class="source-item"><div class="source-heading"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3" stroke="currentColor" stroke-width="1.6"/><path d="M4 5v7c0 1.66 3.58 3 8 3s8-1.34 8-3V5M4 12v7c0 1.66 3.58 3 8 3s8-1.34 8-3v-7" stroke="currentColor" stroke-width="1.6"/></svg><h3>Asset profiles</h3><span id="profile-source-tag" class="source-label" hidden>Database</span></div><p id="profile-source-copy">Asset profiles are returned by the database API.</p></div>
+          <div class="source-item"><div class="source-heading"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19V5m0 14h16M7 14l4-5 4 3 5-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><h3>Market snapshots</h3><span id="market-source-tag" class="source-label" hidden>Coinbase Exchange</span></div><p id="market-source-copy">Quotes come from Coinbase Exchange.</p></div>
         </div>
       </section>
       <section id="learn" class="learn-section" aria-labelledby="learn-title">
         <div class="section-heading"><div><h2 id="learn-title">A little crypto context</h2></div></div>
         <div class="learn-columns">
           <section aria-labelledby="glossary-title"><h3 id="glossary-title">The essentials</h3><dl class="glossary"><div><dt>Ticker</dt><dd>An asset’s short symbol, such as BTC for Bitcoin.</dd></div><div><dt>USD price</dt><dd>The price of one unit in US dollars. An API quote is a last-trade snapshot.</dd></div><div><dt>24-hour volume</dt><dd>The amount traded over a day. Check its unit; volume is different from price.</dd></div><div><dt>Price change</dt><dd>How much a price moved over a period, often a percentage. This page does not report it.</dd></div><div><dt>Market timestamp</dt><dd>When the provider observed a quote. Receiving a response now does not make an old quote current.</dd></div></dl></section>
-          <section class="faq" aria-labelledby="faq-title"><h3 id="faq-title">FAQs</h3><details><summary>Are these prices live?</summary><p>Check the label beside the asset. Sample data is fixed for demonstration. API data comes through Flask; its market timestamp determines whether freshness can be checked. The selected asset refreshes every 30 seconds while this tab is visible.</p></details><details><summary>Why is information missing?</summary><p>The database or market API may not supply every field. Missing descriptions, categories, quotes and units are marked explicitly. Sample values never fill gaps in an API response.</p></details><details><summary>How do I get another quote?</summary><p>The selected asset refreshes on page load and every 30 seconds while this tab is visible. You can also refresh it manually. Requests pause during cooldowns or API rate limits. Sample values stay fixed.</p></details><details><summary>Which assets can I explore?</summary><p>The catalog contains 27 assets. In API mode, assets awaiting database support are marked unavailable. Monero is excluded because its configured Coinbase USD market is unavailable.</p></details><details><summary>Where can I view JSON?</summary><p>Open Specifications in the asset overview, then View JSON response. With the supplied Flask API, database and market responses are combined in the browser, with links to both original endpoints.</p></details><details><summary>Where is my watchlist saved?</summary><p>Your watchlist is saved in this browser on this device. It does not create an account or sync between devices. If browser storage is unavailable, it lasts for this visit.</p></details></section>
+          <section class="faq" aria-labelledby="faq-title"><h3 id="faq-title">FAQs</h3><details><summary>Are these prices live?</summary><p id="faq-live-answer">Prices come from Coinbase Exchange through our API. The selected asset refreshes every 30 seconds while this tab is visible. Check the provider timestamp for the age of its latest trade.</p></details><details><summary>Why is information missing?</summary><p id="faq-missing-answer">Unavailable descriptions, categories, quotes and units are marked explicitly. A failed market request does not fall back to stored prices.</p></details><details><summary>How do I get another quote?</summary><p id="faq-refresh-answer">The selected asset refreshes on page load and every 30 seconds while this tab is visible. You can also refresh it manually. Requests pause during cooldowns or API rate limits.</p></details><details><summary>Which assets can I explore?</summary><p>The catalog contains 27 assets. In API mode, assets awaiting database support are marked unavailable. Monero is excluded because its configured Coinbase USD market is unavailable.</p></details><details><summary>Where can I view JSON?</summary><p>Open Specifications in the asset overview, then View JSON response. With the supplied Flask API, database and market responses are combined in the browser, with links to both original endpoints.</p></details><details><summary>Where is my watchlist saved?</summary><p>Your watchlist is saved in this browser on this device. It does not create an account or sync between devices. If browser storage is unavailable, it lasts for this visit.</p></details></section>
         </div>
       </section>
       <footer class="site-footer"><a class="footer-brand" href="#explorer">cryptolookup.</a><a href="#explorer">Back to explore ↑</a></footer>
     </main>
 
-    <dialog id="json-dialog" aria-labelledby="json-title" aria-describedby="json-description"><div class="dialog-header"><h2 id="json-title">JSON response</h2><button id="close-json" class="icon-button" type="button" aria-label="Close JSON response">×</button></div><p id="json-description">The response used to display this asset.</p><div class="json-toolbar"><span id="json-mode-label">Simulated demo response</span><button id="copy-json" class="text-button" type="button">Copy JSON</button></div><pre id="json-output" tabindex="0" aria-label="JSON response"><code id="json-code"></code></pre><div class="dialog-footer"><p id="json-endpoint-description">Local sample data. No API endpoint was called.</p><a id="json-endpoint" class="text-button" target="_blank" rel="noopener noreferrer" hidden>Open API endpoint</a><a id="json-profile-endpoint" class="text-button" target="_blank" rel="noopener noreferrer" hidden>Database JSON</a><a id="json-market-endpoint" class="text-button" target="_blank" rel="noopener noreferrer" hidden>Market JSON</a><span id="copy-status" role="status" aria-live="polite"></span></div></dialog>
+    <dialog id="json-dialog" aria-labelledby="json-title" aria-describedby="json-description"><div class="dialog-header"><h2 id="json-title">JSON response</h2><button id="close-json" class="icon-button" type="button" aria-label="Close JSON response">×</button></div><p id="json-description">The response used to display this asset.</p><div class="json-toolbar"><span id="json-mode-label">API response</span><button id="copy-json" class="text-button" type="button">Copy JSON</button></div><pre id="json-output" tabindex="0" aria-label="JSON response"><code id="json-code"></code></pre><div class="dialog-footer"><p id="json-endpoint-description">Original API responses used to display this asset.</p><a id="json-endpoint" class="text-button" target="_blank" rel="noopener noreferrer" hidden>Open API endpoint</a><a id="json-profile-endpoint" class="text-button" target="_blank" rel="noopener noreferrer" hidden>Database JSON</a><a id="json-market-endpoint" class="text-button" target="_blank" rel="noopener noreferrer" hidden>Market JSON</a><span id="copy-status" role="status" aria-live="polite"></span></div></dialog>
     <noscript><div class="noscript-message">Enable JavaScript to search and display cryptocurrency information.</div></noscript>
   </body>
 </html>

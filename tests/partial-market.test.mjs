@@ -53,7 +53,7 @@ function assertPartial(result, code) {
 }
 
 test("partial market display is enabled explicitly in default config with bounded UI refresh and stale intervals", () => {
-  assert.equal(APP_CONFIG.mode, "demo");
+  assert.equal(APP_CONFIG.mode, "api");
   assert.equal(APP_CONFIG.allowPartialMarket, true);
   assert.equal(APP_CONFIG.refreshCooldownMs, 5000);
   assert.equal(APP_CONFIG.staleAfterMs, 300000);

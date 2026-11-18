@@ -124,7 +124,7 @@ for f in sorted(stage.rglob('*')):
         entries.append({'path':f.relative_to(stage).as_posix(),'bytes':len(data),'sha256':digest(data)})
 write('PACKAGE_MANIFEST.json',json.dumps({
     'schemaVersion':1,'package':name,'preparedUTC':datetime.now(timezone.utc).isoformat(timespec='seconds'),
-    'handoffSourceCommit':commit,'frontendTests':'94/94 passed locally; new backend candidate not executed',
+    'handoffSourceCommit':commit,'frontendTests':'96/96 passed locally; new backend candidate not executed',
     'deploymentStatus':'No deployment performed; specific remote-write approval required',
     'apiReleaseSHA256':manifests['api']['archive']['sha256'],'files':entries
 },indent=2)+'\n')
